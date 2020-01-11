@@ -11,7 +11,7 @@ const defaultSettings = {
   "adminRole": "Administrator",
   "systemNotice": "true",
   "welcomeChannel": "welcome",
-  "welcomeMessage": "Say hello to {{user}}, everyone! We all need a warm welcome sometimes :D",
+  "welcomeMessage": "Hello {{user}}!",
   "welcomeEnabled": "false"
 };
 

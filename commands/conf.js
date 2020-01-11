@@ -8,13 +8,37 @@ change it for that guild. The `add` action adds a key to the configuration of ev
 your bot. The `del` action removes the key also from every guild, and loses its value forever.
 */
 
+// Provide valid keywords to be used with this command, and a description for each one of them.
+const keys = {
+  add: { key: "add", desc: "Add a new key." },
+  edit: { key: "edit", desc: "Edit an existing key." },
+  del: { key: "del", desc: "Remove a key from defaults." },
+  get: { key: "get", desc: "View a key." },
+  restore: { key: "restore", desc: "Restore the default configuration from the file (resets all changes made by using this command, ever)." },
+}
+
+exports.conf = {
+  enabled: true,
+  guildOnly: true,
+  aliases: ["defaults"],
+  permLevel: "Bot Admin"
+};
+
+exports.help = {
+  name: "conf",
+  category: "System",
+  description: "Modify the default configuration for all guilds.",
+  usage: "conf <view/get/edit> <key> <value>",
+  arghelp: keys
+};
+
 exports.run = async (client, message, [action, key, ...value], level) => { // eslint-disable-line no-unused-vars
 
   // Retrieve Default Values from the default settings in the bot.
   const defaults = client.settings.get("default");
   
   // Adding a new key adds it to every guild (it will be visible to all of them)
-  if (action === "add") {
+  const add = () => {
     if (!key) return message.reply("Please specify a key to add");
     if (defaults[key]) return message.reply("This key already exists in the default settings");
     if (value.length < 1) return message.reply("Please specify a value");
@@ -22,13 +46,13 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
     // `value` being an array, we need to join it first.
     defaults[key] = value.join(" ");
   
-    // One the settings is modified, we write it back to the collection
+    // Once the settings is modified, we write it back to the collection
     client.settings.set("default", defaults);
     message.reply(`${key} successfully added with the value of ${value.join(" ")}`);
-  } else
-  
+  };
+
   // Changing the default value of a key only modified it for guilds that did not change it to another value.
-  if (action === "edit") {
+  const edit = () => {
     if (!key) return message.reply("Please specify a key to edit");
     if (!defaults[key]) return message.reply("This key does not exist in the settings");
     if (value.length < 1) return message.reply("Please specify a new value");
@@ -37,11 +61,11 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
 
     client.settings.set("default", defaults);
     message.reply(`${key} successfully edited to ${value.join(" ")}`);
-  } else
-  
+  };
+
   // WARNING: DELETING A KEY FROM THE DEFAULTS ALSO REMOVES IT FROM EVERY GUILD
   // MAKE SURE THAT KEY IS REALLY NO LONGER NEEDED!
-  if (action === "del") {
+  const del = async () => {
     if (!key) return message.reply("Please specify a key to delete.");
     if (!defaults[key]) return message.reply("This key does not exist in the settings");
     
@@ -68,30 +92,27 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
     if (["n","no","cancel"].includes(response)) {
       message.reply("Action cancelled.");
     }
-  } else
-  
+  };
+
   // Display a key's default value
-  if (action === "get") {
+  const get = () => {
     if (!key) return message.reply("Please specify a key to view");
     if (!defaults[key]) return message.reply("This key does not exist in the settings");
     message.reply(`The value of ${key} is currently ${defaults[key]}`);
+  };
 
-  // Display all default settings.
-  } else {
+  // Restore the default settings from the default file.
+  const restore = () => client.settings.set("default", client.defaultSettings);
+  
+  switch(action){
+    case keys.add.key: add(); break;
+    case keys.edit.key: edit(); break;
+    case keys.get.key: get(); break;
+    case keys.del.key: del(); break;
+    case keys.restore.key: restore(); break;
+    default: 
+    // Display all default settings.
     await message.channel.send(`***__Bot Default Settings__***\n\`\`\`json\n${inspect(defaults)}\n\`\`\``);
   }
 };
 
-exports.conf = {
-  enabled: true,
-  guildOnly: true,
-  aliases: ["defaults"],
-  permLevel: "Bot Admin"
-};
-
-exports.help = {
-  name: "conf",
-  category: "System",
-  description: "Modify the default configuration for all guilds.",
-  usage: "conf <view/get/edit> <key> <value>"
-};
