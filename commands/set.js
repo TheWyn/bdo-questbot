@@ -4,12 +4,27 @@
 // Note that there's no "checks" in this basic version - no config "types" like
 // Role, String, Int, etc... It's basic, to be extended with your deft hands!
 
-// Note the **destructuring** here. instead of `args` we have :
-// [action, key, ...value]
-// This gives us the equivalent of either:
-// const action = args[0]; const key = args[1]; const value = args.slice(2);
-// OR the same as:
-// const [action, key, ...value] = args;
+exports.conf = {
+  name: "set",
+  enabled: true,
+  guildOnly: true,
+  aliases: ["setting", "settings"],
+  permLevel: "Administrator"
+};
+
+const keys = {
+  edit: { key: "edit", desc: "Edit an existing key." },
+  reset: { key: "reset", desc: "Reset a key to default." },
+  restore: { key: "restore", desc: "Restore default configuration."},
+  get: { key: "get", desc: "View a key." },
+}
+
+exports.help = {
+  category: "System",
+  description: "View or change settings for your server.",
+  usage: `${exports.conf.name} [${Object.values(keys).map((v, idx) => v.key).join("|")}] <key> <value>`
+};
+
 exports.run = async (client, message, [action, key, ...value], level) => { // eslint-disable-line no-unused-vars
 
   // Retrieve current guild settings (merged) and overrides only.
@@ -19,7 +34,7 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
   if (!client.settings.has(message.guild.id)) client.settings.set(message.guild.id, {});
   
   // Edit an existing key value
-  if (action === "edit") {
+  const edit = () => {
     // User must specify a key.
     if (!key) return message.reply("Please specify a key to edit");
     // User must specify a key that actually exists!
@@ -38,10 +53,10 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
 
     // Confirm everything is fine!
     message.reply(`${key} successfully edited to ${joinedValue}`);
-  } else
+  }
   
   // Resets a key to the default value
-  if (action === "del" || action === "reset") {
+  const reset = async () => {
     if (!key) return message.reply("Please specify a key to reset.");
     if (!defaults[key]) return message.reply("This key does not exist in the settings");
     if (!overrides[key]) return message.reply("This key does not have an override and is already using defaults.");
@@ -59,14 +74,34 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
     if (["n","no","cancel"].includes(response)) {
       message.reply(`Your setting for \`${key}\` remains at \`${settings[key]}\``);
     }
-  } else
-  
-  if (action === "get") {
+  };
+
+  const get = () => {
     if (!key) return message.reply("Please specify a key to view");
     if (!defaults[key]) return message.reply("This key does not exist in the settings");
     const isDefault = !overrides[key] ? "\nThis is the default global default value." : "";
     message.reply(`The value of ${key} is currently ${settings[key]}${isDefault}`);
-  } else {
+  }
+
+  const restore = async () => {
+    const response = await client.awaitReply(message, `Are you sure you want to restore the default configuration?`);
+    // If they respond with y or yes, continue.
+    if (["y", "yes"].includes(response.toLowerCase())) {
+      client.settings.delete(message.guild.id);
+      message.reply(`Successfully restored default configuration.`);
+    } else
+    // If they respond with n or no, we inform them that the action has been cancelled.
+    if (["n","no","cancel"].includes(response)) {
+      message.reply(`Aborted.`);
+    }
+  }
+
+  switch(action){
+    case keys.edit.key: edit(); break;
+    case keys.get.key: get(); break;
+    case keys.reset.key: reset(); break;
+    case keys.restore.key: restore(); break;
+    default: 
     // Otherwise, the default action is to return the whole configuration;
     const array = [];
     Object.entries(settings).forEach(([key, value]) => {
@@ -76,16 +111,3 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
   }
 };
 
-exports.conf = {
-  name: "set",
-  enabled: true,
-  guildOnly: true,
-  aliases: ["setting", "settings"],
-  permLevel: "Administrator"
-};
-
-exports.help = {
-  category: "System",
-  description: "View or change settings for your server.",
-  usage: "set <view/get/edit> <key> <value>"
-};

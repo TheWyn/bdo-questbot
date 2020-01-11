@@ -10,14 +10,6 @@ your bot. The `del` action removes the key also from every guild, and loses its 
 
 // Provide valid keywords to be used with this command, and a description for each one of them.
 
-const keys = {
-  add: { key: "add", desc: "Add a new key." },
-  edit: { key: "edit", desc: "Edit an existing key." },
-  del: { key: "del", desc: "Remove a key from defaults." },
-  get: { key: "get", desc: "View a key." },
-  restore: { key: "restore", desc: "Restore the default configuration from the file (resets all changes made by using this command, ever)." },
-}
-
 exports.conf = {
   name: "conf",
   enabled: true,
@@ -25,6 +17,14 @@ exports.conf = {
   aliases: ["defaults"],
   permLevel: "Bot Admin"
 };
+
+const keys = {
+  add: { key: "add", desc: "Add a new key." },
+  edit: { key: "edit", desc: "Edit an existing key." },
+  del: { key: "del", desc: "Remove a key from defaults." },
+  get: { key: "get", desc: "View a key." },
+  restore: { key: "restore", desc: "Restore the default configuration from the file (resets all changes made by using this command, ever)." },
+}
 
 exports.help = {
   category: "System",

@@ -98,9 +98,9 @@ module.exports = (client) => {
       if (props.init) {
         props.init(client);
       }
-      client.commands.set(props.help.name, props);
+      client.commands.set(props.conf.name, props);
       props.conf.aliases.forEach(alias => {
-        client.aliases.set(alias, props.help.name);
+        client.aliases.set(alias, props.conf.name);
       });
       return false;
     } catch (e) {
