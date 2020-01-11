@@ -5,9 +5,7 @@ module.exports = (client) => {
 
   This is a very basic permission system for commands which uses "levels"
   "spaces" are intentionally left black so you can add them if you want.
-  NEVER GIVE ANYONE BUT OWNER THE LEVEL 10! By default this can run any
-  command including the VERY DANGEROUS `eval` and `exec` commands!
-
+  
   */
   client.permlevel = message => {
     let permlvl = 0;
@@ -66,29 +64,6 @@ module.exports = (client) => {
     } catch (e) {
       return false;
     }
-  };
-
-
-  /*
-  MESSAGE CLEAN FUNCTION
-
-  "Clean" removes @everyone pings, as well as tokens, and makes code blocks
-  escaped so they're shown more easily. As a bonus it resolves promises
-  and stringifies objects!
-  This is mostly only used by the Eval and Exec commands.
-  */
-  client.clean = async (client, text) => {
-    if (text && text.constructor.name == "Promise")
-      text = await text;
-    if (typeof text !== "string")
-      text = require("util").inspect(text, {depth: 1});
-
-    text = text
-      .replace(/`/g, "`" + String.fromCharCode(8203))
-      .replace(/@/g, "@" + String.fromCharCode(8203))
-      .replace(client.token, "mfa.VkO_2G4Qv3T--NO--lWetW_tjND--TOKEN--QFTm6YGtzq9PH--4U--tG0");
-
-    return text;
   };
 
   client.loadCommand = (commandName) => {

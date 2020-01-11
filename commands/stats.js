@@ -23,7 +23,7 @@ exports.conf = {
 };
 
 exports.help = {
-  category: "Miscelaneous",
+  category: "Miscellaneous",
   description: "Gives some useful bot statistics",
   usage: exports.conf.name,
   keys: {}
