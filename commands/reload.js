@@ -11,6 +11,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 };
 
 exports.conf = {
+  name: "reload",
   enabled: true,
   guildOnly: false,
   aliases: [],
@@ -18,8 +19,8 @@ exports.conf = {
 };
 
 exports.help = {
-  name: "reload",
   category: "System",
   description: "Reloads a command that\"s been modified.",
-  usage: "reload [command]"
+  usage: `${exports.conf.name} <command>`,
+  keys: {}
 };

@@ -4,6 +4,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 };
 
 exports.conf = {
+  name: "ping",
   enabled: true,
   guildOnly: false,
   aliases: [],
@@ -11,8 +12,8 @@ exports.conf = {
 };
 
 exports.help = {
-  name: "ping",
-  category: "Miscelaneous",
-  description: "It like... Pings. Then Pongs. And it's not Ping Pong.",
-  usage: "ping"
+  category: "Miscellaneous",
+  description: "Check the current ping.",
+  usage: exports.conf.name,
+  keys: {}
 };

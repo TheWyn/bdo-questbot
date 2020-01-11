@@ -9,6 +9,7 @@ your bot. The `del` action removes the key also from every guild, and loses its 
 */
 
 // Provide valid keywords to be used with this command, and a description for each one of them.
+
 const keys = {
   add: { key: "add", desc: "Add a new key." },
   edit: { key: "edit", desc: "Edit an existing key." },
@@ -18,6 +19,7 @@ const keys = {
 }
 
 exports.conf = {
+  name: "conf",
   enabled: true,
   guildOnly: true,
   aliases: ["defaults"],
@@ -25,11 +27,10 @@ exports.conf = {
 };
 
 exports.help = {
-  name: "conf",
   category: "System",
   description: "Modify the default configuration for all guilds.",
-  usage: "conf <view/get/edit> <key> <value>",
-  arghelp: keys
+  usage: `${exports.conf.name} [${Object.values(keys).map((v, idx) => v.key).join("|")}] <key> <value>`,
+  keys: keys
 };
 
 exports.run = async (client, message, [action, key, ...value], level) => { // eslint-disable-line no-unused-vars

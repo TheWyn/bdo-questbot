@@ -15,6 +15,7 @@ exports.run = (client, message, args, level) => { // eslint-disable-line no-unus
 };
 
 exports.conf = {
+  name: "stats",
   enabled: true,
   guildOnly: false,
   aliases: [],
@@ -22,8 +23,8 @@ exports.conf = {
 };
 
 exports.help = {
-  name: "stats",
   category: "Miscelaneous",
   description: "Gives some useful bot statistics",
-  usage: "stats"
+  usage: exports.conf.name,
+  keys: {}
 };
