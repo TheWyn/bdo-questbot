@@ -1,3 +1,4 @@
+const Discord = require("discord.js");
 const moment = require("moment");
 const interval = 5000
 
@@ -32,7 +33,7 @@ module.exports = (client) => {
         if (match){
             const [name, idx] = [match[1], match[2]];
             const resolved = serverNames.filter(s => s.toUpperCase().startsWith(name.toUpperCase()));
-            return resolved.map((v, d) => v+idx);
+            return resolved.map((v, d) => v + idx);
         }
     };
 
@@ -49,12 +50,21 @@ module.exports = (client) => {
     const currentGQs = (guild) => {
         const gqs = client.gq.lists.get(guild) || [];
         let msg = ``;
-        gqs.forEach((v, idx) => msg += `<${idx + 1}> [${v.server}] ${v.desc} --- Time left: ${moment.duration(v.end.diff(curr)).format('HH:mm:ss')}.\n`);
+        gqs.forEach((v, idx) => msg += `<${idx + 1}> [**${v.server}**] ${v.desc} --- Time left: ${moment.duration(v.end.diff(curr)).format('HH:mm:ss')}.\n`);
         return msg;
       };
 
+      let embed = new Discord.RichEmbed()
+        .setColor('#0099ff')
+        .setTitle('Current Missions')
+        .setDescription('///')
+        .attachFiles(['./assets/bdo-icon.png'])
+        .setThumbnail('attachment://bdo-icon.png')
+        .setTimestamp();
+
     setInterval(async () => {
         curr = moment();
+        
         for (var [guild, quests] of client.gq.lists.entries()) {
             let [valid, expired] = [[], []];
             quests.forEach((v, _) => (curr > v.end ? expired : valid).push(v));
@@ -63,16 +73,17 @@ module.exports = (client) => {
 
             if (quests.length > 0){
                 client.gq.lists.set(guild, quests);
-                const content = currentGQs(guild);
+                embed.setDescription(currentGQs(guild));
                 if (!client.gq.msgs.has(guild)){
-                    const msg = await guild.channels.find(v => v.type == `text`).send(content);
+                    const msg = await guild.channels.find(v => v.type == `text`).send(embed);
                     client.gq.msgs.set(guild, msg);
                 }else{
-                    client.gq.msgs.get(guild).edit(content);
+                    client.gq.msgs.get(guild).edit(embed);
                 }
             }else{
                 client.gq.lists.delete(guild);
-                if (client.gq.msgs.has(guild)) client.gq.msgs.get(guild).edit("Current guild quests: None.");
+                embed.setDescription('///')
+                if (client.gq.msgs.has(guild)) client.gq.msgs.get(guild).edit(embed);
             }
           }
     }, interval);
