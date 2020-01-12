@@ -42,18 +42,18 @@ function getServers(input){
     return [];
 }
 
-function formatMissions(guild){
-    const gqs = client.gq.lists.get(guild) || [];
-    let msg = ``;
-    gqs.forEach((v, idx) => msg += `<${idx + 1}> [**${v.server}**] ${v.desc} --- Time left: ${format.interval(moment.duration(v.end.diff(curr)))}.\n`);
-    return msg;
-}
-
 function extension(client){
     client.gq = {};
     client.gq.lists = new Map();
     client.gq.msgs = new Map();
 
+    function formatMissions(guild){
+        const gqs = client.gq.lists.get(guild) || [];
+        let msg = ``;
+        gqs.forEach((v, idx) => msg += `<${idx + 1}> [**${v.server}**] ${v.desc} --- Time left: ${format.interval(moment.duration(v.end.diff(curr)))}.\n`);
+        return msg;
+    }
+    
     let curr = moment();
 
     let embed = new Discord.RichEmbed()
@@ -68,9 +68,13 @@ function extension(client){
         curr = moment();
         
         for (var [guild, quests] of client.gq.lists.entries()) {
+            const settings = client.getSettings(guild);
+            const channel = guild.channels.find(v => v.type == `text` && v.id == settings.quests.channel);
+            if (!channel) continue;
+
             let [valid, expired] = [[], []];
             quests.forEach((v, _) => (curr > v.end ? expired : valid).push(v));
-            expired.forEach((v, _) => guild.channels.find(v => v.type == `text`).send(moment() + "Mission expired: " + v.desc));
+            expired.forEach((v, _) => channel.send(moment() + "Mission expired: " + v.desc));
             quests = valid;
 
             console.log(valid.length);
@@ -78,7 +82,7 @@ function extension(client){
                 client.gq.lists.set(guild, quests);
                 embed.setDescription(formatMissions(guild));
                 if (!client.gq.msgs.has(guild)){
-                    const msg = await guild.channels.find(v => v.type == `text`).send(embed);
+                    const msg = await channel.send(embed);
                     client.gq.msgs.set(guild, msg);
                 }else{
                     client.gq.msgs.get(guild).edit(embed);

@@ -28,7 +28,7 @@ exports.help = {
 exports.run = async (client, message, [action, key, ...value], level) => { // eslint-disable-line no-unused-vars
 
   // Retrieve current guild settings (merged) and overrides only.
-  const settings = message.settings;
+  const settings = client.getSettings(message.guild);
   const defaults = client.settings.get("default");
   const overrides = client.settings.get(message.guild.id);
   if (!client.settings.has(message.guild.id)) client.settings.set(message.guild.id, {});
