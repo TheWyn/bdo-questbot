@@ -1,3 +1,10 @@
+
+module.exports = {
+    extension: extension,
+    getMissions: getMissions,
+    getServers: getServers
+}
+
 const Discord = require("discord.js");
 const moment = require("moment");
 const format = require("./modules/format");
@@ -15,47 +22,47 @@ const missions = [
     ["Gather Rough Stone x1600", 210],
 ];
 
-module.exports = (client) => {
+function getMissions(input){
+    const words = input.split(/\s+/);
+    return missions.filter(([desc, count]) => {
+        const descWords = desc.split(/\s+/).map((v, _) => v.toUpperCase());
+        return words.every(w => descWords.includes(w.toUpperCase()));
+    });
+}
+
+function getServers(input){
+    const r = /^([a-zA-Z]+)(\d+)$/;
+    const match = r.exec(input);
+
+    if (match){
+        const [name, idx] = [match[1], match[2]];
+        const resolved = serverNames.filter(s => s.toUpperCase().startsWith(name.toUpperCase()));
+        return resolved.map((v, d) => v + idx);
+    }
+    return [];
+}
+
+function formatMissions(guild){
+    const gqs = client.gq.lists.get(guild) || [];
+    let msg = ``;
+    gqs.forEach((v, idx) => msg += `<${idx + 1}> [**${v.server}**] ${v.desc} --- Time left: ${format.interval(moment.duration(v.end.diff(curr)))}.\n`);
+    return msg;
+}
+
+function extension(client){
     client.gq = {};
     client.gq.lists = new Map();
     client.gq.msgs = new Map();
 
-    client.gq.getServer = (input) => {
-        const r = /^([a-zA-Z]+)(\d+)$/;
-        const match = r.exec(input);
-
-        if (match){
-            const [name, idx] = [match[1], match[2]];
-            const resolved = serverNames.filter(s => s.toUpperCase().startsWith(name.toUpperCase()));
-            return resolved.map((v, d) => v + idx);
-        }
-        return [];
-    };
-
-    client.gq.getMission = (input) => {
-        const words = input.split(/\s+/);
-        return missions.filter(([desc, count]) => {
-            const descWords = desc.split(/\s+/).map((v, _) => v.toUpperCase());
-            return words.every(w => descWords.includes(w.toUpperCase()));
-        });
-    };
-
     let curr = moment();
 
-    const currentGQs = (guild) => {
-        const gqs = client.gq.lists.get(guild) || [];
-        let msg = ``;
-        gqs.forEach((v, idx) => msg += `<${idx + 1}> [**${v.server}**] ${v.desc} --- Time left: ${format.interval(moment.duration(v.end.diff(curr)))}.\n`);
-        return msg;
-      };
-
-      let embed = new Discord.RichEmbed()
-        .setColor('#0099ff')
-        .setTitle('Current Missions')
-        .setDescription('///')
-        .attachFiles(['./assets/bdo-icon.png'])
-        .setThumbnail('attachment://bdo-icon.png')
-        .setTimestamp();
+    let embed = new Discord.RichEmbed()
+    .setColor('#0099ff')
+    .setTitle('Current Missions')
+    .setDescription('///')
+    .attachFiles(['./assets/bdo-icon.png'])
+    .setThumbnail('attachment://bdo-icon.png')
+    .setTimestamp();
 
     setInterval(async () => {
         curr = moment();
@@ -69,7 +76,7 @@ module.exports = (client) => {
             console.log(valid.length);
             if (quests.length > 0){
                 client.gq.lists.set(guild, quests);
-                embed.setDescription(currentGQs(guild));
+                embed.setDescription(formatMissions(guild));
                 if (!client.gq.msgs.has(guild)){
                     const msg = await guild.channels.find(v => v.type == `text`).send(embed);
                     client.gq.msgs.set(guild, msg);
@@ -83,4 +90,4 @@ module.exports = (client) => {
             }
           }
     }, interval);
-};
+}

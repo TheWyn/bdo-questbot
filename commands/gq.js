@@ -1,6 +1,7 @@
 const { inspect } = require("util");
 const format = require("../modules/format.js");
 const moment = require("moment");
+const guildquests = require("../guildquests");
 
 const actions = {
   add: {name: "add", desc: "Add stuff."}
@@ -30,17 +31,16 @@ exports.run = async (client, message, [action, ...value], level) => { // eslint-
     if (value.length < 2) return message.reply("Please specify the name and server of the mission.");
     const [server, name] = value;
 
-    const serverOptions = client.gq.getServer(server);
-    const questOptions = client.gq.getMission(name);
+    const serverOptions = guildquests.getServers(server);
+    const questOptions = guildquests.getMissions(name);
 
-    const quest = {};
     if (serverOptions.length > 1){
-      return message.reply("Unclear."); //TODO
+      return message.reply(`Unclear server name ${server}.`);
     } else if (serverOptions.length == 0){
       return message.reply(`Unknown server ${server}.`);
     }
-    quest.server = serverOptions[0];
-
+    
+    var r;
     if (questOptions.length > 1){
       let msg = `Multiple options found:\n`;
       questOptions.forEach((v, idx) => msg += `<${idx + 1}> ${v}\n`);
@@ -48,18 +48,26 @@ exports.run = async (client, message, [action, ...value], level) => { // eslint-
       const response = await client.awaitReply(message, msg, {code: "asciidoc"});
       const idx = parseInt(response);
       if (idx > 0 && idx <= questOptions.length){
-        quest.desc = questOptions[idx-1][0];
-        quest.end = moment().add(questOptions[idx-1][1], 'minutes');
+        r = questOptions[idx-1];
       }else{
         return message.reply("Invalid value.");
       }
+    }else if (questOptions.length == 1){
+      r = questOptions[0];
+    }else{
+      return message.reply(`No quest found for ${name}.`);
     }
-    
+
+    const quest = {
+      server: serverOptions[0],
+      desc: r[0],
+      end: moment().add(r[1], 'minutes')
+    };
     const gqs = client.gq.lists.get(message.guild) || [];
     gqs.push(quest);
     client.gq.lists.set(message.guild, gqs);
     
-    message.reply(`Add guild mission ${quest.desc} on server ${quest.server}.`).then(message => message.delete(5000));
+    message.reply(`Add guild mission ${quest.desc} on server ${quest.server}.`);
   };
 
   if (!action){

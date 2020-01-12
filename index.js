@@ -75,7 +75,7 @@ const init = async () => {
     client.levelCache[thisLevel.name] = thisLevel.level;
   }
 
-  require("./guildquests.js")(client);
+  require("./guildquests.js").extension(client);
   
   // Here we login the client.
   client.login(client.config.token);
