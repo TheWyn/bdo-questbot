@@ -7,7 +7,7 @@
     "welcomeChannel": "welcome",
     "welcomeMessage": "Say hello to {{user}}, everyone!",
     "welcomeEnabled": false,
-    "enabledModules": ["Misc", "Settings"]
+    "enabledModules": ["misc", "guild"]
   };
 
   module.exports = defaultSettings;

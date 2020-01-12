@@ -58,7 +58,10 @@ module.exports = async (client, message) => {
   }
 
   // Check if the associated module of the command is enabled
-  if (!settings.enabledModules.includes(cmd.help.category.toLowerCase))
+  // system level commands are hardcoded enabled
+  const lc = cmd.help.category.toLowerCase();
+  console.log(lc);
+  if (!(settings.enabledModules.includes(lc) || lc === "system"))
     return message.channel.send(`This command is part of the currently disabled module ${cmd.help.category}. Enable the module to use this command.`); 
 
   // If the command exists, **AND** the user has permission, run it.

@@ -1,36 +1,22 @@
 const { inspect } = require("util");
+const format = require("../modules/format.js");
 
-/*
-FOR GUILD SETTINGS SEE set.js !
-This command is used to modify the bot's default configuration values, which affects all guilds. 
-If a default setting is not specifically overwritten by a guild, changing a default here will
-change it for that guild. The `add` action adds a key to the configuration of every guild in
-your bot. The `del` action removes the key also from every guild, and loses its value forever.
-*/
-
-// Provide valid keywords to be used with this command, and a description for each one of them.
+const actions = {
+  add: {name: "add", desc: "Add stuff."}
+};
 
 exports.conf = {
   name: "gq",
   enabled: true,
   guildOnly: true,
-  aliases: ["guild quest"],
+  aliases: ["guildquest"],
   permLevel: "User"
 };
 
-const keys = {
-  add: { key: "add", desc: "Add a new key." },
-  edit: { key: "update", desc: "Edit an existing key." },
-  del: { key: "complete", desc: "Remove a key from defaults." },
-  get: { key: "get", desc: "View a key." },
-  restore: { key: "restore", desc: "Restore the default configuration from the file (resets all changes made by using this command, ever)." },
-}
-
 exports.help = {
   category: "Guild",
-  description: "Add and modify guild quests",
-  usage: `${exports.conf.name} [${Object.values(keys).map((v, idx) => v.key).join("|")}] <key> <value>`,
-  keys: keys
+  description: "Manage your guild quests",
+  usage: `${exports.conf.name} [${Object.values(actions).map((v, _) => v.name).join("|")}] ...`,
 };
 
 exports.run = async (client, message, [action, ...value], level) => { // eslint-disable-line no-unused-vars
@@ -40,7 +26,6 @@ exports.run = async (client, message, [action, ...value], level) => { // eslint-
 
   // Adding a new key adds it to every guild (it will be visible to all of them)
   const add = async () => {
-    console.log("add");
     if (value.length < 3) return message.reply("Please specify a name, server and time.");
     const [name, server, time] = value;
 
@@ -80,11 +65,14 @@ exports.run = async (client, message, [action, ...value], level) => { // eslint-
     message.reply(`Add guild mission ${gq} on server ${s}, time left: ${time}.`).then(message => message.delete(5000));
   };
 
+  if (!action){
+    return message.reply(format.formatUsage(actions));
+  }
+
   switch(action){
-    case keys.add.key: add(); break;
-    default: 
-    // Display all default settings.
-    await message.channel.send(`***__Bot Default Settings__***\n\`\`\`json\n${inspect(defaults)}\n\`\`\``);
+    case actions.add: add(); break;
+    default:
+      return message.reply(`Unknown action ${action}. Supported actions are: ${Object.values(actions).join(", ")}`);
   }
 };
 

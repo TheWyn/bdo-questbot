@@ -51,36 +51,28 @@ module.exports = (client) => {
       };
 
     setInterval(async () => {
-        console.log("Update");
-        console.log(client.gq.lists.size);
         for (var [guild, quests] of client.gq.lists.entries()) {
             if (quests.length > 0){
                 const content = currentGQs(guild);
                 if (!client.gq.msgs.has(guild)){
-                    console.log("send");
                     const msg = await guild.channels.find(v => v.type == `text`).send(content);
                     client.gq.msgs.set(guild, msg);
                 }else{
-                    console.log(client.gq.msgs.get(guild));
-                    console.log(content);
                     client.gq.msgs.get(guild).edit(content);
                 }
             }
 
             quests.forEach((v, _) => {
-                console.log(v["time"]);
-                v["time"] = v["time"] - 1;
-                if (v["time"] <= 0){
-                    guild.channels.find(v => v.type == `text`).send("Mission expired: "+v["gq"]);
+                v.time = v.time - 1;
+                if (v.time <= 0){
+                    guild.channels.find(v => v.type == `text`).send("Mission expired: " + v.gq);
                 }
             });
 
-            const updated = quests.filter(v => v["time"] > 0);
+            quests = quests.filter(v => v["time"] > 0);
 
-            console.log(updated.length);
-
-            if (updated.length > 0){
-                client.gq.lists.set(guild, updated);
+            if (quests.length > 0){
+                client.gq.lists.set(guild, quests);
             }else{
                 client.gq.lists.delete(guild);
             }
