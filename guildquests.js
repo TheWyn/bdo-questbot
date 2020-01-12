@@ -1,26 +1,18 @@
 const Discord = require("discord.js");
 const moment = require("moment");
 const format = require("./modules/format");
+const fs = require("fs");
 
 const interval = 5000
 
 const serverNames = ["Olvia", "Valencia", "Balenos", "Arsha", "Mediah", "Calpheon", "Velia", "Serendia", "Kamasylvia"];
 
-const missionNames = [
-"Hexe Sanctuary Skeleton",
-"Southwestern Calpheon Rhutum",
-"Soldier's Grave Frenzied Skeleton",
-"Keplan Primal Giant Post Giant",
-"Calpheon Shrine enemy",
-"Wandering Rogue Den Wandering Rogue",
-"Hasrah Ancient Ruins Ancient Weapons",
-"Sherekhan during the day",
-"Hungry Margoria Sea Monster",
-"Gather Rough Stone x700",
-"Gather Rough Stone x350",
-"Gather Rough Stone x1000",
-"Gather Rough Stone x1200",
-"Gather Rough Stone x1600"
+const missions = [
+    ["Gather Rough Stone x350", 120],
+    ["Gather Rough Stone x700", 120],
+    ["Gather Rough Stone x1000", 150],
+    ["Gather Rough Stone x1200", 180],
+    ["Gather Rough Stone x1600", 210],
 ];
 
 module.exports = (client) => {
@@ -37,13 +29,14 @@ module.exports = (client) => {
             const resolved = serverNames.filter(s => s.toUpperCase().startsWith(name.toUpperCase()));
             return resolved.map((v, d) => v + idx);
         }
+        return [];
     };
 
     client.gq.getMission = (input) => {
         const words = input.split(/\s+/);
-        return missionNames.filter(s => {
-            const sWords = s.split(/\s+/).map((v, _) => v.toUpperCase());
-            return words.every(w => sWords.includes(w.toUpperCase()));
+        return missions.filter(([desc, count]) => {
+            const descWords = desc.split(/\s+/).map((v, _) => v.toUpperCase());
+            return words.every(w => descWords.includes(w.toUpperCase()));
         });
     };
 
@@ -73,6 +66,7 @@ module.exports = (client) => {
             expired.forEach((v, _) => guild.channels.find(v => v.type == `text`).send(moment() + "Mission expired: " + v.desc));
             quests = valid;
 
+            console.log(valid.length);
             if (quests.length > 0){
                 client.gq.lists.set(guild, quests);
                 embed.setDescription(currentGQs(guild));

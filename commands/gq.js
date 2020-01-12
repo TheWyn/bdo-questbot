@@ -27,20 +27,19 @@ exports.run = async (client, message, [action, ...value], level) => { // eslint-
 
   // Adding a new key adds it to every guild (it will be visible to all of them)
   const add = async () => {
-    if (value.length < 3) return message.reply("Please specify a name, server and time.");
-    const [name, server, duration] = value;
+    if (value.length < 2) return message.reply("Please specify the name and server of the mission.");
+    const [server, name] = value;
 
     const serverOptions = client.gq.getServer(server);
     const questOptions = client.gq.getMission(name);
 
-    var s;
-    var gq;
+    const quest = {};
     if (serverOptions.length > 1){
       return message.reply("Unclear."); //TODO
     } else if (serverOptions.length == 0){
       return message.reply(`Unknown server ${server}.`);
     }
-    s = serverOptions[0];
+    quest.server = serverOptions[0];
 
     if (questOptions.length > 1){
       let msg = `Multiple options found:\n`;
@@ -49,21 +48,18 @@ exports.run = async (client, message, [action, ...value], level) => { // eslint-
       const response = await client.awaitReply(message, msg, {code: "asciidoc"});
       const idx = parseInt(response);
       if (idx > 0 && idx <= questOptions.length){
-        gq = questOptions[idx-1];
+        quest.desc = questOptions[idx-1][0];
+        quest.end = moment().add(questOptions[idx-1][1], 'minutes');
       }else{
         return message.reply("Invalid value.");
       }
     }
     
     const gqs = client.gq.lists.get(message.guild) || [];
-    gqs.push({
-      server: s,
-      desc: gq,
-      end: moment().add(duration, 'minutes')
-    });
+    gqs.push(quest);
     client.gq.lists.set(message.guild, gqs);
     
-    message.reply(`Add guild mission ${gq} on server ${s}, time left: ${duration}.`).then(message => message.delete(5000));
+    message.reply(`Add guild mission ${quest.desc} on server ${quest.server}.`).then(message => message.delete(5000));
   };
 
   if (!action){
