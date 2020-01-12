@@ -1,4 +1,5 @@
-const interval = 1000
+const moment = require("moment");
+const interval = 5000
 
 const serverNames = ["Olvia", "Valencia", "Balenos", "Arsha", "Mediah", "Calpheon", "Velia", "Serendia", "Kamasylvia"];
 
@@ -43,16 +44,25 @@ module.exports = (client) => {
         });
     };
 
+    let curr = moment();
+
     const currentGQs = (guild) => {
         const gqs = client.gq.lists.get(guild) || [];
         let msg = ``;
-        gqs.forEach((v, idx) => msg += `<${idx + 1}> [${v.server}] ${v.desc} --- ${v.time} minutes left.\n`);
+        gqs.forEach((v, idx) => msg += `<${idx + 1}> [${v.server}] ${v.desc} --- Time left: ${moment.duration(v.end.diff(curr)).format('HH:mm:ss')}.\n`);
         return msg;
       };
 
     setInterval(async () => {
+        curr = moment();
         for (var [guild, quests] of client.gq.lists.entries()) {
+            let [valid, expired] = [[], []];
+            quests.forEach((v, _) => (curr > v.end ? expired : valid).push(v));
+            expired.forEach((v, _) => guild.channels.find(v => v.type == `text`).send(moment() + "Mission expired: " + v.desc));
+            quests = valid;
+
             if (quests.length > 0){
+                client.gq.lists.set(guild, quests);
                 const content = currentGQs(guild);
                 if (!client.gq.msgs.has(guild)){
                     const msg = await guild.channels.find(v => v.type == `text`).send(content);
@@ -60,21 +70,9 @@ module.exports = (client) => {
                 }else{
                     client.gq.msgs.get(guild).edit(content);
                 }
-            }
-
-            quests.forEach((v, _) => {
-                v.time = v.time - 1;
-                if (v.time <= 0){
-                    guild.channels.find(v => v.type == `text`).send("Mission expired: " + v.gq);
-                }
-            });
-
-            quests = quests.filter(v => v["time"] > 0);
-
-            if (quests.length > 0){
-                client.gq.lists.set(guild, quests);
             }else{
                 client.gq.lists.delete(guild);
+                if (client.gq.msgs.has(guild)) client.gq.msgs.get(guild).edit("Current guild quests: None.");
             }
           }
     }, interval);

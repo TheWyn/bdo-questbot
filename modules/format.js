@@ -2,3 +2,7 @@
 exports.formatUsage = (usage) => {
     return Object.entries(usage).map(([k, v], i) => `${v.name}: ${v.desc}`).join("\n");
 };
+
+exports.interval = (i) => {
+
+};

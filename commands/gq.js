@@ -1,5 +1,6 @@
 const { inspect } = require("util");
 const format = require("../modules/format.js");
+const moment = require("moment");
 
 const actions = {
   add: {name: "add", desc: "Add stuff."}
@@ -27,7 +28,7 @@ exports.run = async (client, message, [action, ...value], level) => { // eslint-
   // Adding a new key adds it to every guild (it will be visible to all of them)
   const add = async () => {
     if (value.length < 3) return message.reply("Please specify a name, server and time.");
-    const [name, server, time] = value;
+    const [name, server, duration] = value;
 
     const serverOptions = client.gq.getServer(server);
     const questOptions = client.gq.getMission(name);
@@ -53,16 +54,16 @@ exports.run = async (client, message, [action, ...value], level) => { // eslint-
         return message.reply("Invalid value.");
       }
     }
-
+    
     const gqs = client.gq.lists.get(message.guild) || [];
     gqs.push({
       server: s,
       desc: gq,
-      time: time
+      end: moment().add(duration, 'minutes')
     });
     client.gq.lists.set(message.guild, gqs);
     
-    message.reply(`Add guild mission ${gq} on server ${s}, time left: ${time}.`).then(message => message.delete(5000));
+    message.reply(`Add guild mission ${gq} on server ${s}, time left: ${duration}.`).then(message => message.delete(5000));
   };
 
   if (!action){
@@ -70,7 +71,7 @@ exports.run = async (client, message, [action, ...value], level) => { // eslint-
   }
 
   switch(action){
-    case actions.add: add(); break;
+    case actions.add.name: add(); break;
     default:
       return message.reply(`Unknown action ${action}. Supported actions are: ${Object.values(actions).join(", ")}`);
   }
