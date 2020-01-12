@@ -1,5 +1,7 @@
 const Discord = require("discord.js");
 const moment = require("moment");
+const format = require("./modules/format");
+
 const interval = 5000
 
 const serverNames = ["Olvia", "Valencia", "Balenos", "Arsha", "Mediah", "Calpheon", "Velia", "Serendia", "Kamasylvia"];
@@ -50,7 +52,7 @@ module.exports = (client) => {
     const currentGQs = (guild) => {
         const gqs = client.gq.lists.get(guild) || [];
         let msg = ``;
-        gqs.forEach((v, idx) => msg += `<${idx + 1}> [**${v.server}**] ${v.desc} --- Time left: ${moment.duration(v.end.diff(curr)).format('HH:mm:ss')}.\n`);
+        gqs.forEach((v, idx) => msg += `<${idx + 1}> [**${v.server}**] ${v.desc} --- Time left: ${format.interval(moment.duration(v.end.diff(curr)))}.\n`);
         return msg;
       };
 
