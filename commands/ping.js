@@ -12,7 +12,7 @@ exports.conf = {
 };
 
 exports.help = {
-  category: "Miscellaneous",
+  category: "Misc",
   description: "Check the current ping.",
   usage: exports.conf.name,
   keys: {}

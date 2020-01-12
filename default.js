@@ -3,10 +3,11 @@
     "modLogChannel": "mod-log",
     "modRole": "Moderator",
     "adminRole": "Administrator",
-    "systemNotice": "true",
+    "systemNotice": true,
     "welcomeChannel": "welcome",
     "welcomeMessage": "Say hello to {{user}}, everyone!",
-    "welcomeEnabled": "false"
+    "welcomeEnabled": false,
+    "enabledModules": ["Misc", "Settings"]
   };
 
   module.exports = defaultSettings;
