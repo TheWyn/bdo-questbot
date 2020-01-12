@@ -60,11 +60,10 @@ module.exports = async (client, message) => {
   // Check if the associated module of the command is enabled
   // system level commands are hardcoded enabled
   const lc = cmd.help.category.toLowerCase();
-  console.log(lc);
   if (!(settings.enabledModules.includes(lc) || lc === "system"))
     return message.channel.send(`This command is part of the currently disabled module ${cmd.help.category}. Enable the module to use this command.`); 
 
   // If the command exists, **AND** the user has permission, run it.
-  client.logger.cmd(`[CMD] ${client.config.permLevels.find(l => l.level === level).name} ${message.author.username} (${message.author.id}) ran command ${cmd.help.name}`);
+  client.logger.cmd(`[CMD] ${client.config.permLevels.find(l => l.level === level).name} ${message.author.username} (${message.author.id}) ran command ${cmd.conf.name}`);
   cmd.run(client, message, args, level);
 };
