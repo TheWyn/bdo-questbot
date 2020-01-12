@@ -4,8 +4,9 @@ const moment = require("moment");
 const guildquests = require("../guildquests");
 
 const actions = {
-  add: {name: "add", desc: "Add a guild quest to the list."},
-  channel: {name: "channel", desc: "Select a channel to post the mission list in."}
+  add: {name: "add", desc: "Add a guild quest to the list.", usage: "add <server> <name>"},
+  channel: {name: "channel", desc: "Select a channel to post the mission list in.", usage: "channel <#text-channel>"},
+  complete: {name: "complete", desc: "Complete/Remove a guild mission from the list.", usage: "complete <number>"}
 };
 
 exports.conf = {
@@ -23,11 +24,13 @@ exports.help = {
 };
 
 exports.run = async (client, message, [action, ...value], level) => { // eslint-disable-line no-unused-vars
-  const settings = client.getSettings(message.guild);
+  const guild = message.guild;
+  const settings = client.getSettings(guild);
+  const usgMsg = `Usage: ${settings.prefix}gq`;
 
   // Adding a new key adds it to every guild (it will be visible to all of them)
   async function add() {
-    if (value.length < 2) return message.reply("Please specify the name and server of the mission.");
+    if (value.length < 2) return message.reply(`${usgMsg} ${actions.add.usage}`);
     const [server, name] = value;
 
     const serverOptions = guildquests.getServers(server);
@@ -62,9 +65,9 @@ exports.run = async (client, message, [action, ...value], level) => { // eslint-
       desc: r[0],
       end: moment().add(r[1], 'minutes')
     };
-    const gqs = client.gq.lists.get(message.guild) || [];
+    const gqs = client.gq.getQuests(guild);
     gqs.push(quest);
-    client.gq.lists.set(message.guild, gqs);
+    client.gq.lists.set(guild, gqs);
     
     message.reply(`Add guild mission ${quest.desc} on server ${quest.server}.`);
   };
@@ -74,15 +77,27 @@ exports.run = async (client, message, [action, ...value], level) => { // eslint-
     const r = new RegExp(/<#(\d+)>/);
     if (update){
       const resolved = r.exec(update)[1];
-      const ch = message.guild.channels.find(c => c.id == resolved && c.type == `text`);
+      const ch = guild.channels.find(c => c.id == resolved && c.type == `text`);
       if (ch){
         settings.quests.channel = ch.id;
-        client.settings.set(message.guild.id, settings);
+        client.settings.set(guild.id, settings);
         return message.reply(`Set channel for quest messages to <#${settings.quests.channel}>.`)
       }
     }else{
       return message.reply(`Channel for quest messages is: <#${settings.quests.channel}>.`);
     }
+  }  
+  
+  async function complete() {
+    if (value.length < 1) return message.reply(`${usgMsg} ${actions.complete.usage}`);
+
+    const idx = parseInt(value[0]);
+    const gqs = client.gq.getQuests(guild);
+    if (idx > 0 && idx <= gqs.length){
+      client.gq.lists.set(guild, gqs.splice(idx - 1, 1));
+      return message.reply(`Removed mission <${idx}> from the list.`);
+    }
+    return message.reply(`Failed to remove mission <${idx}>.`);
   }
 
   if (!action){
@@ -92,6 +107,7 @@ exports.run = async (client, message, [action, ...value], level) => { // eslint-
   switch(action){
     case actions.add.name: add(); break;
     case actions.channel.name: channel(); break;
+    case actions.complete.name: complete(); break;
     default:
       return message.reply(`Unknown action ${action}. Usage:\n${format.formatUsage(actions)}`);
   }

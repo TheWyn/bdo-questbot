@@ -47,13 +47,15 @@ function extension(client){
     client.gq.lists = new Map();
     client.gq.msgs = new Map();
 
+    client.gq.getQuests = (guild) => (client.gq.lists.get(guild) || []);
+
     function formatMissions(guild){
-        const gqs = client.gq.lists.get(guild) || [];
+        const gqs = client.gq.getQuests(guild);
         let msg = ``;
         gqs.forEach((v, idx) => msg += `<${idx + 1}> [**${v.server}**] ${v.desc} --- Time left: ${format.interval(moment.duration(v.end.diff(curr)))}.\n`);
         return msg;
     }
-    
+
     let curr = moment();
 
     let embed = new Discord.RichEmbed()
