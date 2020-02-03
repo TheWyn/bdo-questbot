@@ -65,11 +65,13 @@ exports.run = (client, message, args, level) => {
         output += `\n**Aliases**\n`+
         `${command.conf.aliases.join(", ")}\n`;
       }
-      output += `\n**Arguments**\n`;
-
-      Object.values(command.help.keys).forEach(h => {
-       output += `\`${h.key}\` → ${h.desc}\n`;
-      });
+      console.log(command.help.keys.length);
+      if (Object.keys(command.help.keys).length != 0){
+        output += `\n**Arguments**\n`;
+        Object.values(command.help.keys).forEach(h => {
+         output += `\`${h.key}\` → ${h.desc}\n`;
+        });
+      }
       embed.setDescription(output);
       message.channel.send(embed);
   }
