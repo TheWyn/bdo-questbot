@@ -51,24 +51,27 @@ exports.run = (client, message, args, level) => {
   } else {
     // Show individual command's help.
     let c = args[0];
-    if (!client.commands.has(c)) return;
+    if (!client.commands.has(c)){
+      message.channel.send(`Unknown command \`${c}\`.`);
+      return;
+    }
       const command = client.commands.get(c);
       embed.setTitle(`Command \`${command.conf.name}\``);
       if (level < client.levelCache[command.conf.permLevel]) return;
       output += `${command.help.description}\n`+
-      `**Usage**\n`+
-      `${prefix}${command.help.usage}\n`+
-      `**Aliases**`+
-      `\n${command.conf.aliases.join(", ")}\n`+
-      `**Arguments**\n`;
+      `\n**Usage**\n`+
+      `${prefix}${command.help.usage}\n`;
+      if (command.conf.aliases.length != 0){
+        output += `\n**Aliases**\n`+
+        `${command.conf.aliases.join(", ")}\n`;
+      }
+      output += `\n**Arguments**\n`;
 
       Object.values(command.help.keys).forEach(h => {
-       // output += `\`${h.key}\`:: ${h.desc}\n`;
-       embed.addField(`\`${h.key}\`:: ${h.desc}`);
+       output += `\`${h.key}\` → ${h.desc}\n`;
       });
       embed.setDescription(output);
       message.channel.send(embed);
-    
   }
 };
 
