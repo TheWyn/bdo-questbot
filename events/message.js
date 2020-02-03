@@ -45,26 +45,20 @@ module.exports = async (client, message) => {
 
   // Some commands may not be useable in DMs. This check prevents those commands from running
   // and return a friendly error message.
-  if (cmd && !message.guild && cmd.conf.guildOnly)
+  if (cmd && !message.guild && cmd.guildOnly)
     return message.channel.send("This command is unavailable via private message. Please run this command in a server.");
 
-  if (level < client.levelCache[cmd.conf.permLevel]) {
+  if (level < client.levelCache[cmd.permLevel]) {
     if (settings.systemNotice) {
       return message.channel.send(`You do not have permission to use this command.
   Your permission level is ${level} (${client.config.permLevels.find(l => l.level === level).name})
-  This command requires level ${client.levelCache[cmd.conf.permLevel]} (${cmd.conf.permLevel})`);
+  This command requires level ${client.levelCache[cmd.permLevel]} (${cmd.permLevel})`);
     } else {
       return;
     }
   }
 
-  // Check if the associated module of the command is enabled
-  // system level commands are hardcoded enabled
-  const lc = cmd.help.category.toLowerCase();
-  if (!(settings.enabledModules.includes(lc) || lc === "system"))
-    return message.channel.send(`This command is part of the currently disabled module ${cmd.help.category}. Enable the module to use this command.`); 
-
   // If the command exists, **AND** the user has permission, run it.
-  client.logger.cmd(`[CMD] ${client.config.permLevels.find(l => l.level === level).name} ${message.author.username} (${message.author.id}) ran command ${cmd.conf.name}`);
+  client.logger.cmd(`[CMD] ${client.config.permLevels.find(l => l.level === level).name} ${message.author.username} (${message.author.id}) ran command ${cmd.name}`);
   cmd.run(client, message, args, level);
 };

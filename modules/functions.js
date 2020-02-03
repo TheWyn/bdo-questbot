@@ -23,41 +23,21 @@ module.exports = (client) => {
     return permlvl;
   };
 
-  /*
-  GUILD SETTINGS FUNCTION
-
-  This function merges the default settings (from config.defaultSettings) with any
-  guild override you might have for particular guild. If no overrides are present,
-  the default settings are used.
-
-  */
-
   // getSettings merges the client defaults with the guild settings. guild settings in
   // enmap should only have *unique* overrides that are different from defaults.
   client.getSettings = (guild) => {
     client.settings.ensure("default", client.defaultSettings);
     if(!guild) return client.settings.get("default");
-    const guildConf = client.settings.get(guild.id) || {};
+    const guildConf = client.settings.ensure(guild.id, {});
     // This "..." thing is the "Spread Operator". It's awesome!
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
     return ({...client.settings.get("default"), ...guildConf});
   };
 
-  /*
-  SINGLE-LINE AWAITMESSAGE
 
-  A simple way to grab a single reply, from the user that initiated
-  the command. Useful to get "precisions" on certain things...
-
-  USAGE
-
-  const response = await client.awaitReply(msg, "Favourite Color?");
-  msg.reply(`Oh, I really love ${response} too!`);
-
-  */
-  client.awaitReply = async (msg, question, opts = {}, limit = 60000) => {
+  client.awaitReply = async (msg, question, limit = 60000) => {
     const filter = m => m.author.id === msg.author.id;
-    await msg.channel.send(question, opts);
+    await msg.reply(question);
     try {
       const collected = await msg.channel.awaitMessages(filter, { max: 1, time: limit, errors: ["time"] });
       return collected.first().content;
@@ -66,17 +46,17 @@ module.exports = (client) => {
     }
   };
 
+  client.awaitConfirmation = async (message, content) => {
+    const response = await client.awaitReply(message, content + ` (yes/no)`);
+    return ["y", "yes"].includes(response);
+  };
+
   client.loadCommand = (commandName) => {
     try {
       client.logger.log(`Loading Command: ${commandName}`);
-      const props = require(`../commands/${commandName}`);
-      if (props.init) {
-        props.init(client);
-      }
-      client.commands.set(props.conf.name, props);
-      props.conf.aliases.forEach(alias => {
-        client.aliases.set(alias, props.conf.name);
-      });
+      const cmd = require(`../commands/${commandName}`);
+      client.commands.set(cmd.name, cmd);
+      cmd.aliases.forEach(alias => client.aliases.set(alias, cmd.name));
       return false;
     } catch (e) {
       return `Unable to load command ${commandName}: ${e}`;
@@ -95,8 +75,8 @@ module.exports = (client) => {
     if (command.shutdown) {
       await command.shutdown(client);
     }
-    const mod = require.cache[require.resolve(`../commands/${command.conf.name}`)];
-    delete require.cache[require.resolve(`../commands/${command.conf.name}.js`)];
+    const mod = require.cache[require.resolve(`../commands/${command.name}`)];
+    delete require.cache[require.resolve(`../commands/${command.name}.js`)];
     for (let i = 0; i < mod.parent.children.length; i++) {
       if (mod.parent.children[i] === mod) {
         mod.parent.children.splice(i, 1);

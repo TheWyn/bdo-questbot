@@ -1,19 +1,18 @@
-exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-  const msg = await message.channel.send("Ping?");
-  msg.edit(`Pong! Latency is ${msg.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
+const Command = require("../cmd.js");
+
+const ping = new Command();
+
+ping.setName("ping")
+.setEnabled(true)
+.setGuildOnly(false)
+.setAliases([])
+.setPermLevel("User")
+.setCategory("Misc")
+.setDescription("Check the current ping.");
+
+ping.default = async (ctx) => {
+  const msg = await ctx.message.channel.send("Ping?");
+  msg.edit(`Pong! Latency is ${msg.createdTimestamp - ctx.message.createdTimestamp}ms. API Latency is ${Math.round(ctx.self.ping)}ms`);
 };
 
-exports.conf = {
-  name: "ping",
-  enabled: true,
-  guildOnly: false,
-  aliases: [],
-  permLevel: "User"
-};
-
-exports.help = {
-  category: "Misc",
-  description: "Check the current ping.",
-  usage: exports.conf.name,
-  keys: {}
-};
+module.exports = ping;

@@ -10,8 +10,7 @@ module.exports = {
     getServers: getServers
 }
 
-
-const interval = 5000
+const interval = 1000
 
 const serverNames = ["Olvia", "Valencia", "Balenos", "Arsha", "Mediah", "Calpheon", "Velia", "Serendia", "Kamasylvia"];
 
@@ -72,7 +71,8 @@ function extension(client){
         
         for (var [guild, quests] of client.gq.lists.entries()) {
             const settings = client.getSettings(guild);
-            const channel = guild.channels.find(v => v.type == `text` && v.id == settings.quests.channel);
+            const r = new RegExp(/<#(\d+)>/);
+            const channel = guild.channels.find(v => v.type == `text` && v.id == r.exec(settings.questChannel)[1]);
             if (!channel) continue;
 
             let [valid, expired] = [[], []];
@@ -80,7 +80,6 @@ function extension(client){
             expired.forEach((v, _) => channel.send(moment() + "Mission expired: " + v.desc));
             quests = valid;
 
-            console.log(valid.length);
             if (quests.length > 0){
                 client.gq.lists.set(guild, quests);
                 embed.setDescription(formatMissions(guild));

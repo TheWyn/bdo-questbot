@@ -1,30 +1,35 @@
 const { version } = require("discord.js");
+const format = require("../modules/format.js");
 const moment = require("moment");
 require("moment-duration-format");
+const Command = require("../cmd.js");
 
-exports.run = (client, message, args, level) => { // eslint-disable-line no-unused-vars
-  const duration = moment.duration(client.uptime).format(" D [days], H [hrs], m [mins], s [secs]");
-  message.channel.send(`= STATISTICS =
-• Mem Usage  :: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB
-• Uptime     :: ${duration}
-• Users      :: ${client.users.size.toLocaleString()}
-• Servers    :: ${client.guilds.size.toLocaleString()}
-• Channels   :: ${client.channels.size.toLocaleString()}
-• Discord.js :: v${version}
-• Node       :: ${process.version}`, {code: "asciidoc"});
+const stats = new Command();
+
+stats.setName("stats")
+.setEnabled(true)
+.setGuildOnly(false)
+.setAliases([])
+.setPermLevel("User")
+.setCategory("Misc")
+.setDescription("Gives some useful bot statistics.");
+
+stats.default = async (ctx) => {
+  let embed = format.embed();
+  
+  const duration = moment.duration(ctx.self.uptime).format(" D [days], H [hrs], m [mins], s [secs]");
+  embed.setTitle("Statistics")
+  .addField("Memory Usage", `${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB`, true)
+  .addField("Uptime", duration, true)
+  .addBlankField(true)
+  .addField("Users", ctx.self.users.size.toLocaleString(), true)
+  .addField("Servers", ctx.self.guilds.size.toLocaleString(), true)
+  .addField("Channels", ctx.self.channels.size.toLocaleString(), true)
+  .addField("Running on", `Discord.js v${version}\nNode ${process.version}`)
+  .addField("Source Code", `[GitHub Link](https://github.com/Leyren/bdo-guildbot)`)
+  .setFooter("Developed by: Leyren#3099");
+  ctx.message.channel.send(embed);
 };
 
-exports.conf = {
-  name: "stats",
-  enabled: true,
-  guildOnly: false,
-  aliases: [],
-  permLevel: "User"
-};
 
-exports.help = {
-  category: "Misc",
-  description: "Gives some useful bot statistics",
-  usage: exports.conf.name,
-  keys: {}
-};
+module.exports = stats;
