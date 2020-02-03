@@ -11,10 +11,10 @@ your bot. The `del` action removes the key also from every guild, and loses its 
 // Provide valid keywords to be used with this command, and a description for each one of them.
 
 exports.conf = {
-  name: "conf",
+  name: "defaults",
   enabled: true,
   guildOnly: true,
-  aliases: ["defaults"],
+  aliases: [],
   permLevel: "Bot Admin"
 };
 

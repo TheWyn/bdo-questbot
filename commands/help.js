@@ -5,6 +5,8 @@ command is also filtered by level, so if a user does not have access to
 a command, it is not shown to them. If a command name is given with the
 help command, its extended help is shown.
 */
+const format = require("../modules/format.js");
+
 exports.conf = {
   name: "help",
   enabled: true,
@@ -15,49 +17,58 @@ exports.conf = {
 
 exports.help = {
   category: "System",
-  description: "Displays all the available commands for your permission level.",
+  description: "Displays all available commands.",
   usage: `${exports.conf.name} <command>`,
   keys: {}
 };
 
 exports.run = (client, message, args, level) => {
   let output = ``;
+  let embed = format.embed();
+  const prefix = message.guild.settings.prefix;
   // If no specific command is called, show all filtered commands.
   if (!args[0]) {
     // Filter all commands by which are available for the user's level, using the <Collection>.filter() method.
-    const myCommands = message.guild ? client.commands.filter(cmd => client.levelCache[cmd.conf.permLevel] <= level) : client.commands.filter(cmd => client.levelCache[cmd.conf.permLevel] <= level &&  cmd.conf.guildOnly !== true);
-
-    // Here we have to get the command names only, and we use that array to get the longest name.
-    // This make the help commands "aligned" in the output.
-    const commandNames = myCommands.keyArray();
-    const longest = commandNames.reduce((long, str) => Math.max(long, str.length), 0);
+    const myCommands = message.guild ? 
+        client.commands.filter(cmd => client.levelCache[cmd.conf.permLevel] <= level) : 
+        client.commands.filter(cmd => client.levelCache[cmd.conf.permLevel] <= level && cmd.conf.guildOnly !== true);
+        
+    embed.setTitle('Command List')
 
     let currentCategory = "";
-    output += `= Command List =\n\n[Use ${message.settings.prefix}help <commandname> for details]\n`;
+    output += `Use \`${prefix}help <commandname>\` for details\n`;
     const sorted = myCommands.array().sort((p, c) => p.help.category > c.help.category ? 1 :  p.conf.name > c.conf.name && p.help.category === c.help.category ? 1 : -1 );
     sorted.forEach( c => {
       const cat = c.help.category.toProperCase();
       if (currentCategory !== cat) {
-        output += `\n== ${cat} ==\n`;
+        output += `\n**${cat}**\n`;
         currentCategory = cat;
       }
-      output += `${message.settings.prefix}${c.conf.name}${" ".repeat(longest - c.conf.name.length)} :: ${c.help.description}\n`;
+      output += `\`${prefix}${c.conf.name}\` → ${c.help.description}\n`;
     });
-    message.channel.send(output, {code: "asciidoc"});
+    embed.setDescription(output);
+    message.channel.send(embed);
   } else {
     // Show individual command's help.
-    let command = args[0];
-    if (client.commands.has(command)) {
-      command = client.commands.get(command);
+    let c = args[0];
+    if (!client.commands.has(c)) return;
+      const command = client.commands.get(c);
+      embed.setTitle(`Command \`${command.conf.name}\``);
       if (level < client.levelCache[command.conf.permLevel]) return;
-      output += `= ${command.conf.name} = \n${command.help.description}\nusage:: ${command.help.usage}\naliases:: ${command.conf.aliases.join(", ")}\narguments::\n`;
+      output += `${command.help.description}\n`+
+      `**Usage**\n`+
+      `${prefix}${command.help.usage}\n`+
+      `**Aliases**`+
+      `\n${command.conf.aliases.join(", ")}\n`+
+      `**Arguments**\n`;
 
       Object.values(command.help.keys).forEach(h => {
-        output += `  ${h.key}:: ${h.desc}\n`;
+       // output += `\`${h.key}\`:: ${h.desc}\n`;
+       embed.addField(`\`${h.key}\`:: ${h.desc}`);
       });
-      output += `= ${command.conf.name} =`;
-      message.channel.send(output, {code:"asciidoc"});
-    }
+      embed.setDescription(output);
+      message.channel.send(embed);
+    
   }
 };
 

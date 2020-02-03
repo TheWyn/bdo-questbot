@@ -1,14 +1,15 @@
 
+const Discord = require("discord.js");
+const moment = require("moment");
+const format = require("./modules/format");
+const fs = require("fs");
+
 module.exports = {
     extension: extension,
     getMissions: getMissions,
     getServers: getServers
 }
 
-const Discord = require("discord.js");
-const moment = require("moment");
-const format = require("./modules/format");
-const fs = require("fs");
 
 const interval = 5000
 

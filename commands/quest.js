@@ -10,10 +10,10 @@ const actions = {
 };
 
 exports.conf = {
-  name: "gq",
+  name: "quest",
   enabled: true,
   guildOnly: true,
-  aliases: ["guildquest"],
+  aliases: ["gq"],
   permLevel: "User"
 };
 
