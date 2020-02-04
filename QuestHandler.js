@@ -17,15 +17,14 @@ const rChan = new RegExp(/<#(\d+)>/);
 const serverNames = ["Olvia", "Valencia", "Balenos", "Arsha", "Mediah", "Calpheon", "Velia", "Serendia", "Kamasylvia"];
 
 const missions = [
-    ["Gather Rough Stone x350", 120],
-    ["Gather Rough Stone x700", 120],
-    ["Gather Rough Stone x1000", 150],
-    ["Gather Rough Stone x1200", 180],
-    ["Gather Rough Stone x1600", 210],
+    ["Gather Rough Stone x 350", 120],
+    ["Gather Rough Stone x 700", 120],
+    ["Gather Rough Stone x 1000", 150],
+    ["Gather Rough Stone x 1200", 180],
+    ["Gather Rough Stone x 1600", 210],
 ];
 
-function getMissions(input){
-    const words = input.split(/\s+/);
+function getMissions(words){
     return missions.filter(([desc, count]) => {
         const descWords = desc.split(/\s+/).map((v, _) => v.toUpperCase());
         return words.every(w => descWords.includes(w.toUpperCase()));

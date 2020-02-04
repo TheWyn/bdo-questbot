@@ -19,7 +19,7 @@ module.exports = quest;
 
 quest.on("add", "Add a guild quest to the list.", async function(ctx){
   if (ctx.args.length < 2) return ctx.message.reply(format.usage(ctx, [quest.name, ctx.action], [`server`, `quest`]));
-  const [server, name] = ctx.args;
+  const [server, ...name] = ctx.args;
 
   const serverOptions = questHandler.getServers(server);
   const questOptions = questHandler.getMissions(name);
@@ -43,7 +43,7 @@ quest.on("add", "Add a guild quest to the list.", async function(ctx){
   }else if (questOptions.length == 1){
     r = questOptions[0];
   }else{
-    return ctx.message.reply(`No quest with name ${name} found.`);
+    return ctx.message.reply(`No matches for ${name.join(" ")} found.`);
   }
 
   const q = new Quest(serverOptions[0], r[0], moment().add(r[1], 'minutes'));
