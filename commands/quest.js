@@ -47,9 +47,7 @@ quest.on("add", "Add a guild quest to the list.", async function(ctx){
   }
 
   const q = new Quest(serverOptions[0], r[0], moment().add(r[1], 'minutes'));
-  const gqs = questHandler.getActiveMissions(ctx.guild);
-  gqs.push(q);
-  questHandler.lists.set(ctx.guild.id, gqs);
+  questHandler.addMission(ctx.guild, q);
   
   ctx.message.reply(`Add guild mission ${q.description} on server ${q.server}.`);
 });

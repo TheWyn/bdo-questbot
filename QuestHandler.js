@@ -47,6 +47,12 @@ function getActiveMissions(guild){
     return lists.get(guild.id) || [];
 }
 
+function addMission(guild, mission){
+    const missions = questHandler.getActiveMissions(guild);
+    if (missions.length <= 10) missions.push(mission);
+    lists.set(guild.id, missions);
+}
+
 function extension(client){
     let curr = moment();
 
