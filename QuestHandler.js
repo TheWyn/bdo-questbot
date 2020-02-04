@@ -48,7 +48,7 @@ function getActiveMissions(guild){
 }
 
 function addMission(guild, mission){
-    const missions = questHandler.getActiveMissions(guild);
+    const missions = getActiveMissions(guild);
     if (missions.length <= 10) missions.push(mission);
     lists.set(guild.id, missions);
 }
@@ -141,5 +141,5 @@ module.exports = {
     getMissions: getMissions,
     getServers: getServers,
     getActiveMissions: getActiveMissions,
-    lists: lists,
+    addMission: addMission,
 }

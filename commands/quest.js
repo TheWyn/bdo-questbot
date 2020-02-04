@@ -84,9 +84,10 @@ quest.on("complete", "Complete/Remove a guild mission from the list.", async fun
   if (ctx.args.length < 1) return ctx.message.reply(format.usage(ctx, [quest.name, ctx.action], [`number`]));
 
   const idx = parseInt(ctx.args[0]);
-  const gqs = questHandler.getActiveMissions(ctx.guild);
-  if (idx > 0 && idx <= gqs.length){
-    questHandler.lists.set(ctx.guild.id, gqs.splice(idx - 1, 1));
+  const missions = questHandler.getActiveMissions(ctx.guild);
+  if (idx > 0 && idx <= missions.length){
+    const r = missions.splice(idx - 1, 1);
+    questHandler.lists.set(ctx.guild.id, missions);
     return ctx.message.reply(`Removed mission <${idx}> from the list.`);
   }
   return ctx.message.reply(`Failed to remove mission <${idx}>.`);
