@@ -20,8 +20,8 @@ role.default = async (ctx) => {
   
   const mode = ctx.args[0];
   const result = reg.exec(ctx.args[1]);
-  if (!result) ctx.message.reply(`Invalid role ${ctx.args[1]}`);
-  const role = ctx.guild.roles.find(r => r.id === reg.exec(ctx.args[1])[1]);
+  if (!result) return ctx.message.reply(`Invalid role ${ctx.args[1]}`);
+  const role = ctx.guild.roles.find(r => r.id === result[1]);
   
   switch (mode){
     case 'admin':       

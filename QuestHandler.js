@@ -54,6 +54,7 @@ function addMission(guild, mission){
 }
 
 function getChannel(guild, settings) {
+    if (!settings.questChannel) return undefined;
     return guild.channels.find(v => v.type == `text` && v.id == rChan.exec(settings.questChannel)[1]);
 }
 
@@ -103,6 +104,7 @@ function extension(client){
                 continue;
             }
             const settings = client.getSettings(guild);
+            if (!settings.questChannel) continue;
             const channel = guild.channels.find(v => v.type == `text` && v.id == rChan.exec(settings.questChannel)[1]);
             if (!channel) continue;
 

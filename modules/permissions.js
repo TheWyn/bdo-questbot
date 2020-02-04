@@ -36,11 +36,11 @@ const permissions = [
   },
   {
     name: "Server Owner",
-    check: (context) => context.message.channel.type === "text" && context.guild.ownerID !== context.message.author.id
+    check: (context) => context.message.channel.type === "text" && context.guild.ownerID === context.message.author.id
   },
   {
     name: "Bot Owner",
-    check: (context) => config.ownerID !== context.message.author.id
+    check: (context) => config.ownerID === context.message.author.id
   }
 ];
 
