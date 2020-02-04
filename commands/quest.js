@@ -61,7 +61,7 @@ quest.on("channel", "Select/View the channel to post the mission list in.", asyn
     return ctx.message.reply(`Invalid channel ${update}.`);
   }
   return ctx.message.reply(`Channel to post quest list is ${ctx.settings.questChannel}.`);
-});
+}, "Moderator");
 
 quest.on("pin", "Toggle pinning of the mission list on/off.", async function(ctx){
   const usage = () => ctx.message.reply(format.usage(ctx, [quest.name, ctx.action], [`on/off`]));
@@ -73,7 +73,7 @@ quest.on("pin", "Toggle pinning of the mission list on/off.", async function(ctx
     return ctx.message.reply(`Set pinning of quest list to ${ctx.settings.pinQuests}`);
   }
   return usage();
-});
+}, "Moderator");
 
 quest.on("complete", "Complete/Remove a guild mission from the list.", async function(ctx){
   if (ctx.args.length < 1) return ctx.message.reply(format.usage(ctx, [quest.name, ctx.action], [`mission-id`]));

@@ -44,7 +44,7 @@ let permLevels = {};
 permissions.forEach((p, idx) => permLevels[p.name] = idx);
 
 module.exports = {
-    fromName: (name) => permLevels[name],
+    fromName: (name) => name ? permLevels[name] : -1,
     fromContext: (context) => {
       const index = reversed.findIndex(p => p.check(context));
       return adjusted = index < 0 ? 0 : reversed.length - index - 1;

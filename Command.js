@@ -1,3 +1,5 @@
+const permissions = require("./modules/permissions.js");
+
 //General structure of a command, using builder pattern.
 module.exports = class Command{
     constructor(){
@@ -14,8 +16,8 @@ module.exports = class Command{
 
     // Allow external definition of sub-actions of this command.
     // Function f is being called with a context, see `run`.
-    on(key, desc = "", f){
-        this.args[key] = {desc: desc, f: f};
+    on(key, desc = "", f, perm = undefined){
+        this.args[key] = {desc: desc, perm: perm, f: f};
     }
 
     // Initialising function which is called on each run of the command
@@ -44,6 +46,14 @@ module.exports = class Command{
             this.default(context);
         }else{
             const arg = this.args[action];
+            if (arg.perm){
+                const requiredLevel = permissions.fromName(arg.perm);
+                if (context.level < requiredLevel) {
+                    return context.message.channel.send(`You do not have permission to use this command.\n`
+                    +`Your permission level is ${context.level} (${permissions.list[context.level].name})\n`
+                    +`This command requires level ${requiredLevel} (${arg.perm})`);
+                }
+            }
             context.action = action;
             context.args.shift();
             arg.f(context);

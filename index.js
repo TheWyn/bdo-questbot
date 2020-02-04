@@ -30,8 +30,8 @@ require("./modules/functions.js")(client);
 
 // Aliases and commands are put in collections where they can be read from,
 // catalogued, listed, etc.
-client.commands = new Map();
-client.aliases = new Map();
+client.commands = new Enmap();
+client.aliases = new Enmap();
 
 // Now we integrate the use of Evie's awesome EnMap module, which
 // essentially saves a collection to disk. This is great for per-server configs,

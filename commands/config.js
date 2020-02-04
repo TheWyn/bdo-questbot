@@ -7,7 +7,7 @@ config.setName("config")
   .setEnabled(true)
   .setGuildOnly(true)
   .setAliases([])
-  .setPermLevel("Administrator")
+  .setPermLevel("Moderator")
   .setCategory("System")
   .setDescription("View or restore settings for your server.");
 
@@ -28,7 +28,7 @@ config.on("restore", "Reset all settings back to default", async function(ctx){
   } else {
     ctx.message.reply(`Action cancelled.`);
   }
-});
+}, "Administrator");
 
 module.exports = config;
 

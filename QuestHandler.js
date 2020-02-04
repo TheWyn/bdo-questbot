@@ -90,8 +90,6 @@ function extension(client){
     let embed = format.embed()
     .setTitle('Current Missions')
     .setDescription('///')
-    .attachFiles(['./assets/bdo-icon.png'])
-    .setThumbnail('attachment://bdo-icon.png')
     .setTimestamp();
 
     async function update() {
