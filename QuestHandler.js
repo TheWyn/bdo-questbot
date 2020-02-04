@@ -13,6 +13,7 @@ for (var [id, quests] of lists.entries()) {
 
 const interval = 1000
 
+const rChan = new RegExp(/<#(\d+)>/);
 const serverNames = ["Olvia", "Valencia", "Balenos", "Arsha", "Mediah", "Calpheon", "Velia", "Serendia", "Kamasylvia"];
 
 const missions = [
@@ -53,6 +54,27 @@ function addMission(guild, mission){
     lists.set(guild.id, missions);
 }
 
+function getChannel(guild, settings) {
+    return guild.channels.find(v => v.type == `text` && v.id == rChan.exec(settings.questChannel)[1]);
+}
+
+function updateChannel(ctx, update){
+    const ch = ctx.guild.channels.find(c => c.id == rChan.exec(update)[1] && c.type == `text`);
+    if (ch){
+      const old = getChannel(ctx.guild, ctx.settings);
+      // Delete the old message
+      if (old && messages.has(ctx.guild.id)){
+        old.fetchMessage(messages.get(id))
+        .then(msg => msg.delete().catch(() => {}))
+        .catch(() => {});
+      }
+      ctx.settings.questChannel = `<#${ch.id}>`;
+      ctx.self.settings.set(ctx.guild.id, ctx.settings);
+      return ctx.settings.questChannel;
+    }
+    return undefined;
+}
+
 function extension(client){
     let curr = moment();
 
@@ -82,8 +104,7 @@ function extension(client){
                 continue;
             }
             const settings = client.getSettings(guild);
-            const r = new RegExp(/<#(\d+)>/);
-            const channel = guild.channels.find(v => v.type == `text` && v.id == r.exec(settings.questChannel)[1]);
+            const channel = guild.channels.find(v => v.type == `text` && v.id == rChan.exec(settings.questChannel)[1]);
             if (!channel) continue;
 
             let [valid, expired] = [[], []];
@@ -117,17 +138,15 @@ function extension(client){
 
                 // Message might be deleted in between fetch and processing. 
                 // Simply consume the error in that case, message will be re-send in next tick.
-                try{
-                    // Embed has been deleted, repost.
-                    if (msg.embeds.length == 0){
-                         msg.delete().catch(() => {});
-                         await send();
-                    } else {
-                        if (pin && !msg.pinned)  msg.pin().catch(() => {});
-                        else if (!pin && msg.pinned)  msg.unpin().catch(() => {});
-                        msg.edit(embed).catch(() => {});
-                    }
-                } catch (e) {}
+                // Embed has been deleted, repost.
+                if (msg.embeds.length == 0){
+                        msg.delete().catch(() => {});
+                        await send();
+                } else {
+                    if (pin && !msg.pinned)  msg.pin().catch(() => {});
+                    else if (!pin && msg.pinned)  msg.unpin().catch(() => {});
+                    msg.edit(embed).catch(() => {});
+                }
             }
           }
           client.setTimeout(update, interval);
@@ -142,5 +161,6 @@ module.exports = {
     getServers: getServers,
     getActiveMissions: getActiveMissions,
     addMission: addMission,
+    updateChannel: updateChannel,
     lists: lists,
 }

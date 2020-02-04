@@ -52,20 +52,15 @@ quest.on("add", "Add a guild quest to the list.", async function(ctx){
   ctx.message.reply(`Add guild mission ${q.description} on server ${q.server}.`);
 });
 
+const r = new RegExp(/<#(\d+)>/);
 quest.on("channel", "Select/View the channel to post the mission list in.", async function(ctx){
   const update = ctx.args[0];
-  const r = new RegExp(/<#(\d+)>/);
   if (update){
-    const resolved = r.exec(update)[1];
-    const ch = ctx.guild.channels.find(c => c.id == resolved && c.type == `text`);
-    if (ch){
-      ctx.settings.questChannel = `<#${ch.id}>`;
-      ctx.self.settings.set(ctx.guild.id, ctx.settings);
-      return ctx.message.reply(`Set channel to post quest list to ${ctx.settings.questChannel}.`)
-    }
-  }else{
-    return ctx.message.reply(`Channel to post quest list is ${ctx.settings.questChannel}.`);
+    const result = questHandler.updateChannel(ctx, update)
+    if (result) return ctx.message.reply(`Set channel to post quest list to ${ctx.settings.questChannel}.`)
+    return ctx.message.reply(`Invalid channel ${update}.`);
   }
+  return ctx.message.reply(`Channel to post quest list is ${ctx.settings.questChannel}.`);
 });
 
 quest.on("pin", "Toggle pinning of the mission list on/off.", async function(ctx){
