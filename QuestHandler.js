@@ -89,7 +89,7 @@ function extension(client){
             let [valid, expired] = [[], []];
 
             quests.forEach(v => (curr > v.end ? expired : valid).push(v));
-            expired.forEach(v => channel.send(moment() + "Mission expired: " + v.description));
+            expired.forEach(v => channel.send(`Mission expired: **[${v.server}]** ${v.description}`));
             quests = valid;
 
             const pin = settings.pinQuests;
