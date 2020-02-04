@@ -67,13 +67,12 @@ function extension(client){
     .setThumbnail('attachment://bdo-icon.png')
     .setTimestamp();
 
-    setInterval(async () => {
+    async function update() {
         curr = moment();
-
         for (var [id, quests] of lists.entries()) {
             const guild = client.guilds.find(g => g.id === id);
             if (!guild){
-                lists.delete(guild.id);
+                lists.delete(id);
                 continue;
             }
             const settings = client.getSettings(guild);
@@ -87,38 +86,48 @@ function extension(client){
             expired.forEach(v => channel.send(moment() + "Mission expired: " + v.description));
             quests = valid;
 
+            const pin = settings.pinQuests;
+
+            const send = async () => {
+                const msg = await channel.send(embed);
+                messages.set(id, msg.id);
+                return msg;
+            }
+
             if (quests.length > 0){
                 lists.set(id, quests);
                 embed.setDescription(formatMissions(guild));
-
-                const send = async () => {
-                    const msg = await channel.send(embed);
-                    messages.set(id, msg.id);
-                }
-                // Message not yet existing
-                if (!messages.has(id)){
-                    send();
-                }else{
-                    channel.fetchMessages({around: messages.get(id), limit: 1}).then(msgs => {
-                        let msg = msgs.first();
-                        // Embed has been deleted, repost.
-                        if (msg.embeds.length == 0){
-                            msg.delete();
-                            send();
-                        } else {
-                            msg.edit(embed);
-                        }
-                    });
-                    
-                }
             }else{
                 lists.delete(id);
                 embed.setDescription('No active missions.');
-                if (messages.has(id))
-                    channel.fetchMessages({around: messages.get(id), limit: 1}).then(msgs =>  msgs.first().edit(embed));
+            }
+
+            if (!messages.has(id)){
+                await send();
+            }else{
+                // If message not existing, send.
+                const msg = await channel.fetchMessage(messages.get(id))
+                    .catch(async () => await send());
+
+                // Message might be deleted in between fetch and processing. 
+                // Simply consume the error in that case, message will be re-send in next tick.
+                try{
+                    // Embed has been deleted, repost.
+                    if (msg.embeds.length == 0){
+                         msg.delete().catch(() => {});
+                         await send();
+                    } else {
+                        if (pin && !msg.pinned)  msg.pin().catch(() => {});
+                        else if (!pin && msg.pinned)  msg.unpin().catch(() => {});
+                        msg.edit(embed).catch(() => {});
+                    }
+                } catch (e) {}
             }
           }
-    }, interval);
+          client.setTimeout(update, interval);
+    }
+
+    client.on("ready", () => client.setTimeout(update, interval));
 }
 
 module.exports = {
