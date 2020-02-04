@@ -30,16 +30,13 @@ require("./modules/functions.js")(client);
 
 // Aliases and commands are put in collections where they can be read from,
 // catalogued, listed, etc.
-client.commands = new Enmap();
-client.aliases = new Enmap();
+client.commands = new Map();
+client.aliases = new Map();
 
 // Now we integrate the use of Evie's awesome EnMap module, which
 // essentially saves a collection to disk. This is great for per-server configs,
 // and makes things extremely easy for this purpose.
 client.settings = new Enmap({name: "settings"});
-
-// We're doing real fancy node 8 async/await stuff here, and to do that
-// we need to wrap stuff in an anonymous function. It's annoying but it works.
 
 const init = async () => {
 
@@ -62,7 +59,6 @@ const init = async () => {
     const event = require(`./events/${file}`);
     // Bind the client to any event, before the existing arguments
     // provided by the discord.js event. 
-    // This line is awesome by the way. Just sayin'.
     client.on(eventName, event.bind(null, client));
   });
 
@@ -70,8 +66,6 @@ const init = async () => {
   
   // Here we login the client.
   client.login(client.config.token);
-
-// End top-level async/await function.
 };
 
 init();

@@ -3,9 +3,13 @@ const Discord = require("discord.js");
 const moment = require("moment");
 const format = require("./modules/format");
 const fs = require("fs");
+const Enmap = require("enmap");
 
-const lists = new Map();
-const messages = new Map();
+const lists = new Enmap({name: "quests"});
+const messages = new Enmap({name: "messages"});
+for (var [id, quests] of lists.entries()) {
+    quests.forEach(v => v.end = moment(v.end));
+}
 
 const interval = 1000
 
@@ -40,7 +44,7 @@ function getServers(input){
 }
 
 function getActiveMissions(guild){
-    return lists.get(guild) || [];
+    return lists.get(guild.id) || [];
 }
 
 function extension(client){
@@ -49,7 +53,10 @@ function extension(client){
     function formatMissions(guild){
         const missions = getActiveMissions(guild);
         let msg = ``;
-        missions.forEach((v, idx) => msg += `<${idx + 1}> **[${v.server}]** ${v.description} --- Time left: ${format.interval(moment.duration(v.end.diff(curr)))}.\n`);
+    
+        missions.forEach((v, idx) => {
+            msg += `<${idx + 1}> **[${v.server}]** ${v.description} --- Time left: ${format.interval(moment.duration(v.end.diff(curr)))}.\n`;
+        });
         return msg;
     }
 
@@ -62,31 +69,53 @@ function extension(client){
 
     setInterval(async () => {
         curr = moment();
-        
-        for (var [guild, quests] of lists.entries()) {
+
+        for (var [id, quests] of lists.entries()) {
+            const guild = client.guilds.find(g => g.id === id);
+            if (!guild){
+                lists.delete(guild.id);
+                continue;
+            }
             const settings = client.getSettings(guild);
             const r = new RegExp(/<#(\d+)>/);
             const channel = guild.channels.find(v => v.type == `text` && v.id == r.exec(settings.questChannel)[1]);
             if (!channel) continue;
 
             let [valid, expired] = [[], []];
-            quests.forEach((v, _) => (curr > v.end ? expired : valid).push(v));
-            expired.forEach((v, _) => channel.send(moment() + "Mission expired: " + v.description));
+
+            quests.forEach(v => (curr > v.end ? expired : valid).push(v));
+            expired.forEach(v => channel.send(moment() + "Mission expired: " + v.description));
             quests = valid;
 
             if (quests.length > 0){
-                lists.set(guild, quests);
+                lists.set(id, quests);
                 embed.setDescription(formatMissions(guild));
-                if (!messages.has(guild)){
+
+                const send = async () => {
                     const msg = await channel.send(embed);
-                    messages.set(guild, msg);
+                    messages.set(id, msg.id);
+                }
+                // Message not yet existing
+                if (!messages.has(id)){
+                    send();
                 }else{
-                    messages.get(guild).edit(embed);
+                    channel.fetchMessages({around: messages.get(id), limit: 1}).then(msgs => {
+                        let msg = msgs.first();
+                        // Embed has been deleted, repost.
+                        if (msg.embeds.length == 0){
+                            msg.delete();
+                            send();
+                        } else {
+                            msg.edit(embed);
+                        }
+                    });
+                    
                 }
             }else{
-                lists.delete(guild);
-                embed.setDescription('///')
-                if (messages.has(guild)) messages.get(guild).edit(embed);
+                lists.delete(id);
+                embed.setDescription('No active missions.');
+                if (messages.has(id))
+                    channel.fetchMessages({around: messages.get(id), limit: 1}).then(msgs =>  msgs.first().edit(embed));
             }
           }
     }, interval);

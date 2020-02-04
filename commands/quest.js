@@ -49,7 +49,7 @@ quest.on("add", "Add a guild quest to the list.", async function(ctx){
   const q = new Quest(serverOptions[0], r[0], moment().add(r[1], 'minutes'));
   const gqs = questHandler.getActiveMissions(ctx.guild);
   gqs.push(q);
-  questHandler.lists.set(ctx.guild, gqs);
+  questHandler.lists.set(ctx.guild.id, gqs);
   
   ctx.message.reply(`Add guild mission ${q.description} on server ${q.server}.`);
 });
@@ -76,7 +76,7 @@ quest.on("complete", "Complete/Remove a guild mission from the list.", async fun
   const idx = parseInt(ctx.args[0]);
   const gqs = questHandler.getActiveMissions(ctx.guild);
   if (idx > 0 && idx <= gqs.length){
-    questHandler.lists.set(ctx.guild, gqs.splice(idx - 1, 1));
+    questHandler.lists.set(ctx.guild.id, gqs.splice(idx - 1, 1));
     return ctx.message.reply(`Removed mission <${idx}> from the list.`);
   }
   return ctx.message.reply(`Failed to remove mission <${idx}>.`);
