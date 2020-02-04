@@ -1,5 +1,5 @@
 const format = require("../modules/format.js");
-const Command = require("../cmd.js");
+const Command = require("../Command.js");
 
 const help = new Command();
 

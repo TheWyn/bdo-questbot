@@ -4,11 +4,8 @@ const moment = require("moment");
 const format = require("./modules/format");
 const fs = require("fs");
 
-module.exports = {
-    extension: extension,
-    getMissions: getMissions,
-    getServers: getServers
-}
+const lists = new Map();
+const messages = new Map();
 
 const interval = 1000
 
@@ -42,24 +39,21 @@ function getServers(input){
     return [];
 }
 
-function extension(client){
-    client.gq = {};
-    client.gq.lists = new Map();
-    client.gq.msgs = new Map();
+function getActiveMissions(guild){
+    return lists.get(guild) || [];
+}
 
-    client.gq.getQuests = (guild) => (client.gq.lists.get(guild) || []);
+function extension(client){
+    let curr = moment();
 
     function formatMissions(guild){
-        const gqs = client.gq.getQuests(guild);
+        const missions = getActiveMissions(guild);
         let msg = ``;
-        gqs.forEach((v, idx) => msg += `<${idx + 1}> [**${v.server}**] ${v.desc} --- Time left: ${format.interval(moment.duration(v.end.diff(curr)))}.\n`);
+        missions.forEach((v, idx) => msg += `<${idx + 1}> **[${v.server}]** ${v.description} --- Time left: ${format.interval(moment.duration(v.end.diff(curr)))}.\n`);
         return msg;
     }
 
-    let curr = moment();
-
-    let embed = new Discord.RichEmbed()
-    .setColor('#0099ff')
+    let embed = format.embed()
     .setTitle('Current Missions')
     .setDescription('///')
     .attachFiles(['./assets/bdo-icon.png'])
@@ -69,7 +63,7 @@ function extension(client){
     setInterval(async () => {
         curr = moment();
         
-        for (var [guild, quests] of client.gq.lists.entries()) {
+        for (var [guild, quests] of lists.entries()) {
             const settings = client.getSettings(guild);
             const r = new RegExp(/<#(\d+)>/);
             const channel = guild.channels.find(v => v.type == `text` && v.id == r.exec(settings.questChannel)[1]);
@@ -77,23 +71,31 @@ function extension(client){
 
             let [valid, expired] = [[], []];
             quests.forEach((v, _) => (curr > v.end ? expired : valid).push(v));
-            expired.forEach((v, _) => channel.send(moment() + "Mission expired: " + v.desc));
+            expired.forEach((v, _) => channel.send(moment() + "Mission expired: " + v.description));
             quests = valid;
 
             if (quests.length > 0){
-                client.gq.lists.set(guild, quests);
+                lists.set(guild, quests);
                 embed.setDescription(formatMissions(guild));
-                if (!client.gq.msgs.has(guild)){
+                if (!messages.has(guild)){
                     const msg = await channel.send(embed);
-                    client.gq.msgs.set(guild, msg);
+                    messages.set(guild, msg);
                 }else{
-                    client.gq.msgs.get(guild).edit(embed);
+                    messages.get(guild).edit(embed);
                 }
             }else{
-                client.gq.lists.delete(guild);
+                lists.delete(guild);
                 embed.setDescription('///')
-                if (client.gq.msgs.has(guild)) client.gq.msgs.get(guild).edit(embed);
+                if (messages.has(guild)) messages.get(guild).edit(embed);
             }
           }
     }, interval);
+}
+
+module.exports = {
+    extension: extension,
+    getMissions: getMissions,
+    getServers: getServers,
+    getActiveMissions: getActiveMissions,
+    lists: lists,
 }

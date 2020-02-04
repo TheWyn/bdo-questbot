@@ -1,4 +1,4 @@
-const Command = require("../cmd.js");
+const Command = require("../Command.js");
 
 const reload = new Command();
 

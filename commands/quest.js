@@ -1,8 +1,9 @@
 const { inspect } = require("util");
 const format = require("../modules/format.js");
 const moment = require("moment");
-const guildquests = require("../guildquests");
-const Command = require("../cmd.js");
+const questHandler = require("../QuestHandler");
+const Quest = require("../Quest");
+const Command = require("../Command.js");
 
 const quest = new Command();
 
@@ -20,8 +21,8 @@ quest.on("add", "Add a guild quest to the list.", async function(ctx){
   if (ctx.args.length < 2) return ctx.message.reply(format.usage(ctx, [quest.name, ctx.action], [`server`, `quest`]));
   const [server, name] = ctx.args;
 
-  const serverOptions = guildquests.getServers(server);
-  const questOptions = guildquests.getMissions(name);
+  const serverOptions = questHandler.getServers(server);
+  const questOptions = questHandler.getMissions(name);
 
   if (serverOptions.length > 1) return ctx.message.reply(`Unclear server name ${server}.`);
   if (serverOptions.length == 0) return ctx.message.reply(`Unknown server ${server}.`);
@@ -32,7 +33,6 @@ quest.on("add", "Add a guild quest to the list.", async function(ctx){
     const output = `${questOptions.map((v, idx) => `<${idx + 1}> ${v[0]} (${v[1]}min)`).join(`\n`)}`
       + `\nSelect one by typing the quest number in the chat.`;
     embed.setDescription(output);
-    ctx.message.reply(`Multiple options found:`);
     const response = await ctx.self.awaitReply(ctx.message, embed);
     const idx = parseInt(response);
     if (idx > 0 && idx <= questOptions.length){
@@ -46,16 +46,12 @@ quest.on("add", "Add a guild quest to the list.", async function(ctx){
     return ctx.message.reply(`No quest with name ${name} found.`);
   }
 
-  const q = {
-    server: serverOptions[0],
-    desc: r[0],
-    end: moment().add(r[1], 'minutes')
-  };
-  const gqs = ctx.self.gq.getQuests(ctx.guild);
+  const q = new Quest(serverOptions[0], r[0], moment().add(r[1], 'minutes'));
+  const gqs = questHandler.getActiveMissions(ctx.guild);
   gqs.push(q);
-  ctx.self.gq.lists.set(ctx.guild, gqs);
+  questHandler.lists.set(ctx.guild, gqs);
   
-  ctx.message.reply(`Add guild mission ${q.desc} on server ${q.server}.`);
+  ctx.message.reply(`Add guild mission ${q.description} on server ${q.server}.`);
 });
 
 quest.on("channel", "Select/View the channel to post the mission list in.", async function(ctx){
@@ -78,9 +74,9 @@ quest.on("complete", "Complete/Remove a guild mission from the list.", async fun
   if (ctx.args.length < 1) return ctx.message.reply(format.usage(ctx, [quest.name, ctx.action], [`number`]));
 
   const idx = parseInt(ctx.args[0]);
-  const gqs = ctx.self.gq.getQuests(ctx.guild);
+  const gqs = questHandler.getActiveMissions(ctx.guild);
   if (idx > 0 && idx <= gqs.length){
-    ctx.self.gq.lists.set(ctx.guild, gqs.splice(idx - 1, 1));
+    questHandler.lists.set(ctx.guild, gqs.splice(idx - 1, 1));
     return ctx.message.reply(`Removed mission <${idx}> from the list.`);
   }
   return ctx.message.reply(`Failed to remove mission <${idx}>.`);

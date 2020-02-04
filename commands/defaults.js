@@ -2,7 +2,7 @@ const { inspect } = require("util");
 const format = require("../modules/format.js");
 
 // (client side) default settings
-const Command = require("../cmd.js");
+const Command = require("../Command.js");
 
 const defaults = new Command();
 
