@@ -10,10 +10,10 @@ const permissions = [
   // Server Moderator
   {
     name: "Moderator",
-    check: (message) => {
-      if (message.guild && message.settings.modRole) {
-        const role = message.guild.roles.find(r => r.name.toLowerCase() === message.settings.modRole.toLowerCase)
-        return role && message.member.role.has(role.id);
+    check: (context) => {
+      if (context.guild && context.settings.modRole) {
+        const role = context.guild.roles.find(r => r.name.toLowerCase() === context.settings.modRole.toLowerCase)
+        return role && context.message.member.role.has(role.id);
       }
       return false;
     }
@@ -21,21 +21,21 @@ const permissions = [
   {
     // Server Admin
     name: "Administrator",
-    check: (message) => {
-      if (message.guild && message.settings.modRole) {
-        const role = message.guild.roles.find(r => r.name.toLowerCase() === message.settings.modRole.toLowerCase)
-        return role && message.member.role.has(role.id);
+    check: (context) => {
+      if (context.guild && context.settings.adminRole) {
+        const role = context.guild.roles.find(r => r.name.toLowerCase() === context.settings.adminRole.toLowerCase)
+        return role && context.message.member.role.has(role.id);
       }
       return false;
     },
   },
   {
     name: "Server Owner",
-    check: (message) => message.channel.type === "text" && message.guild.ownerID === message.author.id
+    check: (context) => context.message.channel.type === "text" && context.guild.ownerID === context.message.author.id
   },
   {
     name: "Bot Owner",
-    check: (message) => config.ownerID !== message.author.id
+    check: (context) => config.ownerID === context.message.author.id
   }
 ];
 

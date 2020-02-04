@@ -10,7 +10,6 @@ module.exports = async (client, message) => {
   // Grab the settings for this server from Enmap.
   // If there is no guild, get default conf (DMs)
   const settings = client.getSettings(message.guild);
-  message.settings = settings;
 
   // Checks if the bot was mentioned, with no message after it, returns the prefix.
   const prefixMention = new RegExp(`^<@!?${client.user.id}>( |)$`);
@@ -40,8 +39,17 @@ module.exports = async (client, message) => {
   if (cmd && !message.guild && cmd.guildOnly)
     return message.channel.send("This command is unavailable via private message. Please run this command in a server.");
 
+  const context = {
+    self: client,
+    message: message,
+    guild: message.guild,
+    settings: settings,
+    prefix: settings.prefix,
+    args: args,
+}
+
   // Get the users permission level
-  const level = permissions.fromContext(message);
+  const level = permissions.fromContext(context);
   const requiredLevel = permissions.fromName(cmd.permLevel);
   if (level < requiredLevel) {
       return message.channel.send(`You do not have permission to use this command.
@@ -51,5 +59,7 @@ module.exports = async (client, message) => {
 
   // If the command exists, and the user has permission, run it.
   client.logger.cmd(`[CMD] ${permissions.list[level].name} ${message.author.username} (${message.author.id}) ran command ${cmd.name}`);
-  cmd.run(client, message, args, level);
+
+  context.level = level;
+  cmd.run(context);
 };

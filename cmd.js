@@ -37,26 +37,15 @@ module.exports = class Command{
     setUsage(n){ this.usage = n; return this;}
 
     // Gets called from the message.js module, when the message resolved to a call to this command
-     run(self, message, args, level){
-         // Context passed to each command
-        const context = {
-            self: self,
-            message: message,
-            guild: message.guild,
-            settings: message.settings,
-            prefix: message.settings.prefix,
-            args: args,
-            level: level
-        }
-
+     run(context){
         this.init(context);
-        const action = args[0];
+        const action = context.args[0];
         if (action === undefined || !(action in this.args)){
             this.default(context);
         }else{
             const arg = this.args[action];
             context.action = action;
-            args.shift();
+            context.args.shift();
             arg.f(context);
         }
     }
