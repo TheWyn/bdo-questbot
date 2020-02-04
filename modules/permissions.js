@@ -1,4 +1,5 @@
 const config = require("../config.js");
+const reg = new RegExp(/<@&(\d+)>/);
 
 // Permissions
 const permissions = [
@@ -12,30 +13,34 @@ const permissions = [
     name: "Moderator",
     check: (context) => {
       if (context.guild && context.settings.modRole) {
-        const role = context.guild.roles.find(r => r.name.toLowerCase() === context.settings.modRole.toLowerCase)
-        return role && context.message.member.role.has(role.id);
+        const id = reg.exec(context.settings.modRole);
+        if (!id) return false;
+        const role = context.guild.roles.find(r => r.id === id[1]);
+        return role && context.message.member.roles.has(role.id);
       }
       return false;
     }
   },
   {
-    // Server Admin
+    // Server Admin, Copy paste pattern, lazy.
     name: "Administrator",
     check: (context) => {
       if (context.guild && context.settings.adminRole) {
-        const role = context.guild.roles.find(r => r.name.toLowerCase() === context.settings.adminRole.toLowerCase)
-        return role && context.message.member.role.has(role.id);
+        const id = reg.exec(context.settings.adminRole);
+        if (!id) return false;
+        const role = context.guild.roles.find(r => r.id === id[1]);
+        return role && context.message.member.roles.has(role.id);
       }
       return false;
     },
   },
   {
     name: "Server Owner",
-    check: (context) => context.message.channel.type === "text" && context.guild.ownerID === context.message.author.id
+    check: (context) => context.message.channel.type === "text" && context.guild.ownerID !== context.message.author.id
   },
   {
     name: "Bot Owner",
-    check: (context) => config.ownerID === context.message.author.id
+    check: (context) => config.ownerID !== context.message.author.id
   }
 ];
 

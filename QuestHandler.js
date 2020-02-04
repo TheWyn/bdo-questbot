@@ -58,7 +58,9 @@ function getChannel(guild, settings) {
 }
 
 function updateChannel(ctx, update){
-    const ch = ctx.guild.channels.find(c => c.id == rChan.exec(update)[1] && c.type == `text`);
+    const result = rChan.exec(update);
+    if (!result) return undefined;
+    const ch = ctx.guild.channels.find(c => c.id == result[1] && c.type == `text`);
     if (ch){
       const old = getChannel(ctx.guild, ctx.settings);
       // Delete the old message
