@@ -4,6 +4,7 @@ const moment = require("moment");
 const format = require("./format");
 const fs = require("fs");
 const Enmap = require("enmap");
+const QuestData = require("./QuestData.js");
 
 const lists = new Enmap({name: "quests"});
 const messages = new Enmap({name: "messages"});
@@ -14,20 +15,12 @@ for (var [id, quests] of lists.entries()) {
 const interval = 1000
 
 const rChan = new RegExp(/<#(\d+)>/);
-const serverNames = ["Olvia", "Valencia", "Balenos", "Arsha", "Mediah", "Calpheon", "Velia", "Serendia", "Kamasylvia"];
-
-const missions = [
-    ["Gather Rough Stone x 350", 120],
-    ["Gather Rough Stone x 700", 120],
-    ["Gather Rough Stone x 1000", 150],
-    ["Gather Rough Stone x 1200", 180],
-    ["Gather Rough Stone x 1600", 210],
-];
 
 function getMissions(words){
-    return missions.filter(([desc, count]) => {
-        const descWords = desc.split(/\s+/).map((v, _) => v.toUpperCase());
-        return words.every(w => descWords.includes(w.toUpperCase()));
+    return QuestData.missions.filter(([desc, count]) => {
+        const descWords = desc.split(/\s+/).map((v, _) => v.toUpperCase().replace(/[\.,;:\(\)]/g, ''));
+        return words.map(w => w.toUpperCase())
+        .every(w => descWords.some(w2 => w2 === w || w2.match(/X\d+/) && w2.substring(1) === w || w.length > 2 && w2.includes(w)));
     });
 }
 
@@ -37,7 +30,7 @@ function getServers(input){
 
     if (match){
         const [name, idx] = [match[1], match[2]];
-        const resolved = serverNames.filter(s => s.toUpperCase().startsWith(name.toUpperCase()));
+        const resolved = QuestData.serverNames.filter(s => s.toUpperCase().startsWith(name.toUpperCase()));
         return resolved.map((v, d) => v + idx);
     }
     return [];
