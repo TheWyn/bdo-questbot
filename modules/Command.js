@@ -1,4 +1,4 @@
-const permissions = require("./modules/permissions.js");
+const permissions = require("./permissions.js");
 
 //General structure of a command, using builder pattern.
 module.exports = class Command{

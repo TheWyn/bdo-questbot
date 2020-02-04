@@ -62,7 +62,7 @@ const init = async () => {
     client.on(eventName, event.bind(null, client));
   });
 
-  require("./QuestHandler.js").extension(client);
+  require("./modules/QuestHandler.js").extension(client);
   
   // Here we login the client.
   client.login(client.config.token);

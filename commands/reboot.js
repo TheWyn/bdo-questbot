@@ -1,4 +1,4 @@
-const Command = require("../Command.js");
+const Command = require("../modules/Command.js");
 
 const shutdown = new Command();
 

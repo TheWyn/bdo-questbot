@@ -1,5 +1,5 @@
 const { version } = require("discord.js");
-const Command = require("../Command.js");
+const Command = require("../modules/Command.js");
 const format = require("../modules/format.js");
 
 const prefix = new Command();

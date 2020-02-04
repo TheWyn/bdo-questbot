@@ -1,7 +1,7 @@
 
 const Discord = require("discord.js");
 const moment = require("moment");
-const format = require("./modules/format");
+const format = require("./format");
 const fs = require("fs");
 const Enmap = require("enmap");
 

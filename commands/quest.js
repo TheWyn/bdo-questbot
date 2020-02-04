@@ -1,9 +1,9 @@
 const { inspect } = require("util");
 const format = require("../modules/format.js");
 const moment = require("moment");
-const questHandler = require("../QuestHandler");
-const Quest = require("../Quest");
-const Command = require("../Command.js");
+const questHandler = require("../modules/QuestHandler");
+const Quest = require("../modules/Quest");
+const Command = require("../modules/Command.js");
 
 const quest = new Command();
 

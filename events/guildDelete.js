@@ -1,5 +1,5 @@
 // This event executes when a new guild (server) is left.
-const questHandler = require("../questHandler");
+const questHandler = require("../modules/QuestHandler");
 
 module.exports = (client, guild) => {
   client.logger.cmd(`[GUILD LEAVE] ${guild.name} (${guild.id}) removed the bot.`);

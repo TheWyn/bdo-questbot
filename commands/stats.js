@@ -2,7 +2,7 @@ const { version } = require("discord.js");
 const format = require("../modules/format.js");
 const moment = require("moment");
 require("moment-duration-format");
-const Command = require("../Command.js");
+const Command = require("../modules/Command.js");
 
 const stats = new Command();
 
