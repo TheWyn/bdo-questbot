@@ -6,7 +6,7 @@ reload.setName("reload")
 .setEnabled(true)
 .setGuildOnly(false)
 .setAliases([])
-.setPermLevel("Bot Admin")
+.setPermLevel("Bot Owner")
 .setCategory("System")
 .setDescription("Reloads a command that\"s been modified.");
 

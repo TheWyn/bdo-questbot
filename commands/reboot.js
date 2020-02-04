@@ -6,7 +6,7 @@ shutdown.setName("shutdown")
 .setEnabled(true)
 .setGuildOnly(false)
 .setAliases([])
-.setPermLevel("Bot Admin")
+.setPermLevel("Bot Owner")
 .setCategory("System")
 .setDescription("Shuts down the bot. If running under PM2, bot will restart automatically.");
 

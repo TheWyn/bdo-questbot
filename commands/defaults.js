@@ -11,7 +11,7 @@ module.exports = defaults;
 defaults.setName("defaults")
 .setEnabled(true)
 .setGuildOnly(false)
-.setPermLevel("Bot Admin")
+.setPermLevel("Bot Owner")
 .setCategory("System")
 .setDescription("Modify the default configuration for the bot.");
 

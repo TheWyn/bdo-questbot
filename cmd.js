@@ -43,8 +43,8 @@ module.exports = class Command{
             self: self,
             message: message,
             guild: message.guild,
-            settings: message.guild.settings,
-            prefix: message.guild.settings.prefix,
+            settings: message.settings,
+            prefix: message.settings.prefix,
             args: args,
             level: level
         }

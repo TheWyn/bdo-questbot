@@ -28,7 +28,7 @@ help.default = (ctx) => {
     const sorted = myCommands.array().sort((p, c) => p.category > c.category ? 1 :  p.name > c.name && p.category === c.category ? 1 : -1 );
     
     sorted.forEach( c => {
-      const cat = c.category.toProperCase();
+      const cat = c.category;
       if (currentCategory !== cat) {
         output += `\n**${cat}**\n`;
         currentCategory = cat;

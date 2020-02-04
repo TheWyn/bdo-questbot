@@ -1,8 +1,7 @@
  const defaultSettings = {
     "prefix": "~",
-    "modRole": "Moderator",
-    "adminRole": "Administrator",
-    "systemNotice": true,
+    "modRole": null,
+    "adminRole": null,
     "questChannel": null,
     "questPinMessage": true
   };
