@@ -81,7 +81,7 @@ quest.on("pin", "Toggle pinning of the mission list on/off.", async function(ctx
 });
 
 quest.on("complete", "Complete/Remove a guild mission from the list.", async function(ctx){
-  if (ctx.args.length < 1) return ctx.message.reply(format.usage(ctx, [quest.name, ctx.action], [`number`]));
+  if (ctx.args.length < 1) return ctx.message.reply(format.usage(ctx, [quest.name, ctx.action], [`mission-id`]));
 
   const idx = parseInt(ctx.args[0]);
   const missions = questHandler.getActiveMissions(ctx.guild);
@@ -93,3 +93,16 @@ quest.on("complete", "Complete/Remove a guild mission from the list.", async fun
   return ctx.message.reply(`Failed to remove mission <${idx}>.`);
 });
 
+quest.on("edit", "Edit the remaining time of an existing mission.", async function(ctx){
+  if (ctx.args.length < 2) return ctx.message.reply(format.usage(ctx, [quest.name, ctx.action], [`mission-id`, `value`]));
+
+  const idx = parseInt(ctx.args[0]);
+  const missions = questHandler.getActiveMissions(ctx.guild);
+  if (!(idx > 0 && idx <= missions.length)) return ctx.message.reply(`Invalid mission id <${idx}>.`);
+  const mission = missions[idx-1];
+  const value = parseInt(ctx.args[1]);
+  if (!(value > 0 && value < 9999)) return ctx.message.reply(`Invalid time value ${value}.`);
+  mission.end = moment().add(value, 'minutes');
+  questHandler.lists.set(ctx.guild.id, missions);
+  return ctx.message.reply(`Successfully updated mission <${idx}>.`)
+});

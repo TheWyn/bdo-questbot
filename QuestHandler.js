@@ -142,4 +142,5 @@ module.exports = {
     getServers: getServers,
     getActiveMissions: getActiveMissions,
     addMission: addMission,
+    lists: lists,
 }
