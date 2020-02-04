@@ -70,6 +70,18 @@ quest.on("channel", "Select/View the channel to post the mission list in.", asyn
   }
 });
 
+quest.on("pin", "Toggle pinning of the mission list on/off.", async function(ctx){
+  const usage = () => ctx.message.reply(format.usage(ctx, [quest.name, ctx.action], [`on/off`]));
+  if (ctx.args.length < 1) return usage();
+  const update = ctx.args[0];
+  if (["on", "off"].includes(update)){
+    ctx.settings.pinQuests = update === "on";
+    ctx.self.settings.set(ctx.guild.id, ctx.settings);
+    return ctx.message.reply(`Set pinning of quest list to ${ctx.settings.pinQuests}`);
+  }
+  return usage();
+});
+
 quest.on("complete", "Complete/Remove a guild mission from the list.", async function(ctx){
   if (ctx.args.length < 1) return ctx.message.reply(format.usage(ctx, [quest.name, ctx.action], [`number`]));
 

@@ -3,7 +3,7 @@
     "modRole": null,
     "adminRole": null,
     "questChannel": null,
-    "questPinMessage": true
+    "pinQuests": true
   };
 
   module.exports = defaultSettings;
