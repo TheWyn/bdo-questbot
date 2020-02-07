@@ -47,9 +47,11 @@ quest.on("add", "Add a guild quest to the list.", async function(ctx){
   }
 
   const q = new Quest(serverOptions[0], r[0], moment().add(r[1], 'minutes'));
-  questHandler.addMission(ctx.guild, q);
-  
-  ctx.message.reply(`Add guild mission ${q.description} on server ${q.server}.`);
+  if (questHandler.addMission(ctx.guild, q)){
+    ctx.message.reply(`Add guild mission ${q.description} on server ${q.server}.`);
+  } else {
+    ctx.message.reply(`Failed to add mission.`);
+  }
 });
 
 const r = new RegExp(/<#(\d+)>/);
@@ -79,10 +81,7 @@ quest.on("complete", "Complete/Remove a guild mission from the list.", async fun
   if (ctx.args.length < 1) return ctx.message.reply(format.usage(ctx, [quest.name, ctx.action], [`mission-id`]));
 
   const idx = parseInt(ctx.args[0]);
-  const missions = questHandler.getActiveMissions(ctx.guild);
-  if (idx > 0 && idx <= missions.length){
-    const r = missions.splice(idx - 1, 1);
-    questHandler.lists.set(ctx.guild.id, missions);
+  if (questHandler.removeMission(ctx.guild, idx - 1)){
     return ctx.message.reply(`Removed mission <${idx}> from the list.`);
   }
   return ctx.message.reply(`Failed to remove mission <${idx}>.`);
@@ -96,8 +95,12 @@ quest.on("edit", "Edit the remaining time of an existing mission.", async functi
   if (!(idx > 0 && idx <= missions.length)) return ctx.message.reply(`Invalid mission id <${idx}>.`);
   const mission = missions[idx-1];
   const value = parseInt(ctx.args[1]);
-  if (!(value > 0 && value < 9999)) return ctx.message.reply(`Invalid time value ${value}.`);
+  if (!(value > 0 && value < 999)) return ctx.message.reply(`Invalid time value ${value}.`);
   mission.end = moment().add(value, 'minutes');
-  questHandler.lists.set(ctx.guild.id, missions);
+  questHandler.setMission(ctx.guild, idx - 1, mission);
   return ctx.message.reply(`Successfully updated mission <${idx}>.`)
+});
+
+quest.on("repost", "Delete the current quest list message, and repost it on the next update tick.", async function(ctx){
+  questHandler.triggerRepost(ctx);
 });

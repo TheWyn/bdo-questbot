@@ -88,8 +88,6 @@ defaults.default = (context) => {
   let embed = format.embed().setTitle("Bot Defaults");
 
   Object.entries(settings).forEach(([key, value]) => {
-    console.log(key);
-    console.log(value);
     embed.addField(key, format.prettyPrint(value), true);
   });
   message.channel.send(embed);

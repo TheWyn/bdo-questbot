@@ -42,8 +42,32 @@ function getActiveMissions(guild){
 
 function addMission(guild, mission){
     const missions = getActiveMissions(guild);
-    if (missions.length <= 10) missions.push(mission);
-    lists.set(guild.id, missions);
+    if (missions.length <= 10){
+        missions.push(mission);
+        lists.set(guild.id, missions);
+        return true;
+    }
+    return false;
+}
+
+function setMission(guild, index, mission){
+    const missions = getActiveMissions(guild);
+    if (index >= 0 && index < missions.length){
+        missions[index] = mission;
+        lists.set(guild.id, missions);
+        return true;
+    }
+    return false;
+}
+
+function removeMission(guild, index){
+    const missions = getActiveMissions(guild);
+    if (index >= 0 && index < missions.length){
+        const r = missions.splice(idx - 1, 1);
+        lists.set(guild.id, missions);
+        return true;
+    }
+    return false;
 }
 
 function getChannel(guild, settings) {
@@ -68,6 +92,15 @@ function updateChannel(ctx, update){
       return ctx.settings.questChannel;
     }
     return undefined;
+}
+
+// Delete the message so that it will be reposted on the next update
+function triggerRepost(ctx){
+    const settings = ctx.settings;
+    if (!settings.questChannel) return;
+    const channel = getChannel(ctx.guild, settings);
+    if (!channel || !messages.has(ctx.guild.id)) return;
+    channel.fetchMessage(messages.get(ctx.guild.id)).then(msg => msg.delete()).catch(() => {});
 }
 
 function extension(client){
@@ -98,7 +131,7 @@ function extension(client){
             }
             const settings = client.getSettings(guild);
             if (!settings.questChannel) continue;
-            const channel = guild.channels.find(v => v.type == `text` && v.id == rChan.exec(settings.questChannel)[1]);
+            const channel = getChannel(guild, settings);
             if (!channel) continue;
 
             let [valid, expired] = [[], []];
@@ -118,29 +151,28 @@ function extension(client){
             if (quests.length > 0){
                 lists.set(id, quests);
                 embed.setDescription(formatMissions(guild));
+                if (!messages.has(id)){
+                    await send();
+                }else{
+                    // If message not existing, send.
+                    const msg = await channel.fetchMessage(messages.get(id))
+                        .catch(async () => await send());
+    
+                    // Message might be deleted in between fetch and processing. 
+                    // Simply consume the error in that case, message will be re-send in next tick.
+                    // Embed has been deleted, repost.
+                    if (msg.embeds.length == 0){
+                            msg.delete().catch(() => {});
+                            await send();
+                    } else {
+                        if (pin && !msg.pinned)  msg.pin().catch(() => {});
+                        else if (!pin && msg.pinned)  msg.unpin().catch(() => {});
+                        msg.edit(embed).catch(() => {});
+                    }
+                }
             }else{
                 lists.delete(id);
-                embed.setDescription('No active missions.');
-            }
-
-            if (!messages.has(id)){
-                await send();
-            }else{
-                // If message not existing, send.
-                const msg = await channel.fetchMessage(messages.get(id))
-                    .catch(async () => await send());
-
-                // Message might be deleted in between fetch and processing. 
-                // Simply consume the error in that case, message will be re-send in next tick.
-                // Embed has been deleted, repost.
-                if (msg.embeds.length == 0){
-                        msg.delete().catch(() => {});
-                        await send();
-                } else {
-                    if (pin && !msg.pinned)  msg.pin().catch(() => {});
-                    else if (!pin && msg.pinned)  msg.unpin().catch(() => {});
-                    msg.edit(embed).catch(() => {});
-                }
+                channel.fetchMessage(messages.get(id)).then(msg => msg.delete()).catch(() => {});
             }
           }
           client.setTimeout(update, interval);
@@ -155,6 +187,8 @@ module.exports = {
     getServers: getServers,
     getActiveMissions: getActiveMissions,
     addMission: addMission,
+    setMission: setMission,
+    removeMission: removeMission,
     updateChannel: updateChannel,
-    lists: lists,
+    triggerRepost: triggerRepost,
 }
