@@ -15,8 +15,6 @@ defaults.setName("defaults")
 .setCategory("System")
 .setDescription("Modify the default configuration for the bot.");
 
-//usage: `${exports.conf.name} [${Object.values(keys).map((v, idx) => v.key).join("|")}] <key> <value>`,
-
 // Flatten out inputs, for readability
 let [settings, key, value, self, message] = [];
 

@@ -6,15 +6,15 @@ const fs = require("fs");
 const Enmap = require("enmap");
 const QuestData = require("./QuestData.js");
 
+const interval = 60000
+const rChan = new RegExp(/<#(\d+)>/);
+
 const lists = new Enmap({name: "quests"});
 const messages = new Enmap({name: "messages"});
 for (var [id, quests] of lists.entries()) {
     quests.forEach(v => v.end = moment(v.end));
 }
 
-const interval = 1000
-
-const rChan = new RegExp(/<#(\d+)>/);
 
 function getMissions(words){
     return QuestData.missions.filter(([desc, count]) => {

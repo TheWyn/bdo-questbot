@@ -10,32 +10,18 @@ const { promisify } = require("util");
 const readdir = promisify(require("fs").readdir);
 const Enmap = require("enmap");
 
-// This is your client. Some people call it `bot`, some people call it `self`,
-// some might call it `cootchie`. Either way, when you see `client.something`,
-// or `bot.something`, this is what we're refering to. Your client.
 const client = new Discord.Client();
 
-// Here we load the config file that contains our token and our prefix values.
 client.config = require("./config.js");
-
-// Require our logger
 client.logger = require("./modules/Logger");
-
-// Default settings
 client.defaultSettings = require("./default.js");
 
-// Let's start by getting some useful functions that we'll use throughout
-// the bot, like logs and elevation features.
 require("./modules/functions.js")(client);
 
 // Aliases and commands are put in collections where they can be read from,
 // catalogued, listed, etc.
 client.commands = new Enmap();
 client.aliases = new Enmap();
-
-// Now we integrate the use of Evie's awesome EnMap module, which
-// essentially saves a collection to disk. This is great for per-server configs,
-// and makes things extremely easy for this purpose.
 client.settings = new Enmap({name: "settings"});
 
 const init = async () => {
