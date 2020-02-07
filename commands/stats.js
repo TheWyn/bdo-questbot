@@ -1,4 +1,3 @@
-const { version } = require("discord.js");
 const format = require("../modules/format.js");
 const moment = require("moment");
 require("moment-duration-format");

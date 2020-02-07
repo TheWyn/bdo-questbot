@@ -8,7 +8,7 @@ prefix.setName("prefix")
 .setEnabled(true)
 .setGuildOnly(false)
 .setAliases([])
-.setPermLevel("Server Admin")
+.setPermLevel("Server Owner")
 .setCategory("System")
 .setDescription("Change the prefix of this Bot.");
 

@@ -22,7 +22,7 @@ help.default = (ctx) => {
     const myCommands = ctx.guild ? 
         ctx.self.commands.filter(cmd => permissions.fromName(cmd.permLevel) <= ctx.level) : 
         ctx.self.commands.filter(cmd => permissions.fromName(cmd.permLevel) <= ctx.level && cmd.guildOnly !== true);
-
+        
     embed.setTitle('Command List')
 
     let currentCategory = "";

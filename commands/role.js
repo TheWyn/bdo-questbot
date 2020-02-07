@@ -1,4 +1,3 @@
-const { version } = require("discord.js");
 const Command = require("../modules/Command.js");
 const format = require("../modules/format.js");
 
@@ -8,7 +7,7 @@ role.setName("role")
 .setEnabled(true)
 .setGuildOnly(false)
 .setAliases([])
-.setPermLevel("Server Admin")
+.setPermLevel("Server Owner")
 .setCategory("System")
 .setDescription("Manage Moderator/Admin roles for this Bot.");
 
@@ -21,17 +20,17 @@ role.default = async (ctx) => {
   const mode = ctx.args[0];
   const result = reg.exec(ctx.args[1]);
   if (!result) return ctx.message.reply(`Invalid role ${ctx.args[1]}`);
-  const role = ctx.guild.roles.find(r => r.id === result[1]);
+  const r = ctx.guild.roles.find(r => r.id === result[1]);
   
   switch (mode){
     case 'admin':       
-    ctx.settings.adminRole = `<@&${role.id}>`;
+    ctx.settings.adminRole = `<@&${r.id}>`;
     ctx.self.settings.set(ctx.guild.id, ctx.settings);
-    return ctx.message.reply(`Set Admin role to ${role}.`);
+    return ctx.message.reply(`Set Admin role to ${r}.`);
     case 'mod': 
-    ctx.settings.modRole = `<@&${role.id}>`;
+    ctx.settings.modRole = `<@&${r.id}>`;
     ctx.self.settings.set(ctx.guild.id, ctx.settings);
-    return ctx.message.reply(`Set Mod role to ${role}.`);
+    return ctx.message.reply(`Set Mod role to ${r}.`);
     default: return usage();
   }
 };
