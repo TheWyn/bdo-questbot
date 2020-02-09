@@ -102,7 +102,7 @@ function triggerRepost(ctx){
     if (!channel || !messages.has(ctx.guild.id)) return;
     channel.fetchMessage(messages.get(ctx.guild.id))
     .then(async msg => {
-        const m = await channel.send(new Discord.RichEmbed(msg.embeds[0])).then(msg => {
+        const m = await channel.send(makeMessage(ctx.guild, moment())).then(msg => {
             if (settings.pinQuests) msg.pin();
             return msg;
         });
@@ -111,23 +111,28 @@ function triggerRepost(ctx){
     }).then(msg => msg.delete()).catch(() => {});
 }
 
-function extension(client){
-    let curr = moment();
+function makeMessage(guild, curr){
+    const missions = getActiveMissions(guild);
+    let msg = ``;
 
-    function formatMissions(guild){
-        const missions = getActiveMissions(guild);
-        let msg = ``;
-    
+    if (missions.length > 0){
         missions.forEach((v, idx) => {
             msg += `<${idx + 1}> **[${v.server}]** ${v.description} --- Time left: ${format.interval(moment.duration(v.end.diff(curr)))}.\n`;
         });
-        return msg;
+    }else{
+        msg = `No active missions.`;
     }
 
-    let embed = format.embed()
-    .setTitle('Current Missions')
-    .setDescription('///')
-    .setTimestamp();
+    const embed = format.embed()
+        .setTitle('Current Missions')
+        .setDescription(msg);
+
+    return embed;
+}
+
+
+function extension(client){
+    let curr = moment();
 
     async function update() {
         curr = moment();
@@ -142,6 +147,7 @@ function extension(client){
             const channel = getChannel(guild, settings);
             if (!channel) continue;
 
+            // Update the active missions in case some expired
             let [valid, expired] = [[], []];
 
             quests.forEach(v => (curr > v.end ? expired : valid).push(v));
@@ -150,6 +156,11 @@ function extension(client){
 
             const pin = settings.pinQuests;
 
+            if (quests.length > 0) lists.set(id, quests); else lists.delete(id);
+
+            const embed = makeMessage(guild, curr);
+
+            // Send the embed and pin, if required
             const send = async () => {
                 const msg = await channel.send(embed).then(msg => {
                     if (pin) msg.pin();
@@ -159,32 +170,24 @@ function extension(client){
                 return msg;
             }
 
-            if (quests.length > 0){
-                lists.set(id, quests);
-                embed.setDescription(formatMissions(guild));
-                if (!messages.has(id)){
-                    await send();
-                }else{
-                    // If message not existing, send.
-                    const msg = await channel.fetchMessage(messages.get(id))
-                        .catch(async () => await send());
-    
-                    // Message might be deleted in between fetch and processing. 
-                    // Simply consume the error in that case, message will be re-send in next tick.
-                    // Embed has been deleted, repost.
-                    if (msg.embeds.length == 0){
-                            msg.delete().catch(() => {});
-                            await send();
-                    } else {
-                        if (pin && !msg.pinned)  msg.pin().catch(() => {});
-                        else if (!pin && msg.pinned)  msg.unpin().catch(() => {});
-                        msg.edit(embed).catch(() => {});
-                    }
-                }
+            if (!messages.has(id)){
+                await send();
             }else{
-                lists.delete(id);
-                channel.fetchMessage(messages.get(id)).then(msg => msg.delete()).catch(() => {});
+                // If message not existing (got deleted), resend.
+                const msg = await channel.fetchMessage(messages.get(id))
+                    .catch(async () => await send());
+
+                // Embed has been deleted, repost.
+                if (msg.embeds.length == 0){
+                        msg.delete();
+                        await send();
+                } else {
+                    if (pin && !msg.pinned)  msg.pin();
+                    else if (!pin && msg.pinned)  msg.unpin();
+                    msg.edit(embed);
+                }
             }
+            
           }
           client.setTimeout(update, interval);
     }

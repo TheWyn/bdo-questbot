@@ -51,7 +51,10 @@ quest.on("add", "Add a guild quest to the list.", async function(ctx){
     const content = `Add guild mission ${q.description} on server ${q.server}.`;
     ctx.message.reply(content);
     const channel = questHandler.getChannel(ctx.guild, ctx.settings);
-    if (channel) channel.send(content);
+    if (channel){
+      await channel.send(content);
+      questHandler.triggerRepost(ctx);
+    }
   } else {
     ctx.message.reply(`Failed to add mission.`);
   }
