@@ -201,5 +201,6 @@ module.exports = {
     setMission: setMission,
     removeMission: removeMission,
     updateChannel: updateChannel,
+    getChannel: getChannel,
     triggerRepost: triggerRepost,
 }
