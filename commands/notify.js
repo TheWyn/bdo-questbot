@@ -66,11 +66,11 @@ notify.on("all", "Turn on/off notifications for everybody.", async ctx => {
 
   switch (ctx.args[0].toLowerCase()){
     case 'on': 
-      ctx.guild.members.filter(m => !m.user.bot).array().forEach(member => member.addRole(role));
-      return ctx.message.reply(`Turned notifications on for everybody.`);
+      await ctx.guild.members.filter(m => !m.user.bot).array().forEach(member => member.addRoles([role.id]));
+      return ctx.message.reply(`Turning on notifications for everybody... this may take a while.`);
     case 'off': 
-      ctx.guild.members.filter(m => !m.user.bot).array().forEach(member => member.removeRole(role));
-      return ctx.message.reply(`Turned notifications on for everybody.`);
+      await ctx.guild.members.filter(m => !m.user.bot).array().forEach(member => member.removeRoles([role.id]));
+      return ctx.message.reply(`Turning off notifications for everybody... this may take a while.`);
     default: return usage();
   }
 }, "Administrator");
