@@ -9,7 +9,7 @@ notify.setName("notify")
 .setGuildOnly(false)
 .setAliases([])
 .setPermLevel("User")
-.setCategory("System")
+.setCategory("Quests")
 .setDescription("Turn on/off notifications on quests.");
 
 const error = () => 'Not enough permissions to set notification role. Please check the permissions & role hierarchy (the bot role has to be above the notification role)';
