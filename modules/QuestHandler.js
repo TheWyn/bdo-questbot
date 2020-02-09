@@ -6,7 +6,7 @@ const fs = require("fs");
 const Enmap = require("enmap");
 const QuestData = require("./QuestData.js");
 
-const interval = 60000
+const interval = 5000
 const rChan = new RegExp(/<#(\d+)>/);
 
 const lists = new Enmap({name: "quests"});
@@ -63,7 +63,7 @@ function setMission(guild, index, mission){
 function removeMission(guild, index){
     const missions = getActiveMissions(guild);
     if (index >= 0 && index < missions.length){
-        const r = missions.splice(idx - 1, 1);
+        missions.splice(index, 1);
         lists.set(guild.id, missions);
         return true;
     }
