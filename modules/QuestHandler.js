@@ -100,7 +100,15 @@ function triggerRepost(ctx){
     if (!settings.questChannel) return;
     const channel = getChannel(ctx.guild, settings);
     if (!channel || !messages.has(ctx.guild.id)) return;
-    channel.fetchMessage(messages.get(ctx.guild.id)).then(msg => msg.delete()).catch(() => {});
+    channel.fetchMessage(messages.get(ctx.guild.id))
+    .then(async msg => {
+        const m = await channel.send(new Discord.RichEmbed(msg.embeds[0])).then(msg => {
+            if (settings.pinQuests) msg.pin();
+            return msg;
+        });
+        messages.set(ctx.guild.id, m.id);
+        return msg;
+    }).then(msg => msg.delete()).catch(() => {});
 }
 
 function extension(client){
@@ -143,7 +151,10 @@ function extension(client){
             const pin = settings.pinQuests;
 
             const send = async () => {
-                const msg = await channel.send(embed);
+                const msg = await channel.send(embed).then(msg => {
+                    if (pin) msg.pin();
+                    return msg;
+                });
                 messages.set(id, msg.id);
                 return msg;
             }
