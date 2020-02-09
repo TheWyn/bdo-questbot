@@ -193,6 +193,10 @@ function extension(client){
     }
 
     client.on("ready", () => client.setTimeout(update, interval));
+
+    client.on("message", msg => {
+        if (msg.type === `PINS_ADD` && msg.author.id === `665515707689205784`) msg.delete();
+    });
 }
 
 module.exports = {
