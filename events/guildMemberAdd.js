@@ -5,12 +5,11 @@ module.exports = (client, member) => {
   const settings = client.getSettings(member.guild);
 
   // If welcome is off, don't proceed (don't welcome the user)
-  if (settings.welcomeEnabled !== "true") return;
+  if (settings.notifyDefault !== "true" || !settings.notifyRole) return;
+  const reg = new RegExp(/<@&(\d+)>/);
 
-  // Replace the placeholders in the welcome message with actual data
-  const welcomeMessage = settings.welcomeMessage.replace("{{user}}", member.user.tag);
-
-  // Send the welcome message to the welcome channel
-  // There's a place for more configs here.
-  member.guild.channels.find(c => c.name === settings.welcomeChannel).send(welcomeMessage).catch(console.error);
+  const id = reg.exec(settings.notifyRole);
+  if (!id) return;
+  const role = ctx.guild.roles.find(r => r.id === id[1]);
+  member.addRole(role);
 };

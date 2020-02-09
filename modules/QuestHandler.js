@@ -7,7 +7,16 @@ const Enmap = require("enmap");
 const QuestData = require("./QuestData.js");
 
 const interval = 5000
-const rChan = new RegExp(/<#(\d+)>/);
+const chanReg = new RegExp(/<#(\d+)>/);
+const roleReg = new RegExp(/<@&(\d+)>/);
+
+function resolveRole(ctx) {
+  if (!ctx.settings.notifyRole) return undefined;
+  const id = roleReg.exec(ctx.settings.notifyRole);
+  if (!id) return undefined;
+  const role = ctx.guild.roles.find(r => r.id === id[1]);
+  return role;
+}
 
 const lists = new Enmap({name: "quests"});
 const messages = new Enmap({name: "messages"});
@@ -72,11 +81,11 @@ function removeMission(guild, index){
 
 function getChannel(guild, settings) {
     if (!settings.questChannel) return undefined;
-    return guild.channels.find(v => v.type == `text` && v.id == rChan.exec(settings.questChannel)[1]);
+    return guild.channels.find(v => v.type == `text` && v.id == chanReg.exec(settings.questChannel)[1]);
 }
 
 function updateChannel(ctx, update){
-    const result = rChan.exec(update);
+    const result = chanReg.exec(update);
     if (!result) return undefined;
     const ch = ctx.guild.channels.find(c => c.id == result[1] && c.type == `text`);
     if (ch){
@@ -210,4 +219,5 @@ module.exports = {
     updateChannel: updateChannel,
     getChannel: getChannel,
     triggerRepost: triggerRepost,
+    resolveRole: resolveRole
 }
