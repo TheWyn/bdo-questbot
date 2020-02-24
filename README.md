@@ -6,7 +6,9 @@ This bot allows you to manage your guild missions within your Discord server, di
 
 The default prefix for the bot is `~`.
 
-Add the bot: https://discordapp.com/api/oauth2/authorize?client_id=665515707689205784&permissions=8&scope=bot
+Check out the bot on top.gg: https://top.gg/bot/665515707689205784
+
+Or add the bot directly: https://discordapp.com/api/oauth2/authorize?client_id=665515707689205784&permissions=8&scope=bot
 
 # Commands
 | Usage | Alias | Effect  |
@@ -41,7 +43,7 @@ You then can add quests by using
 ```
 ~quest add <server> <mission>
 ```
-For example: `~quests add m1 basi 3800`
+For example: `~quest add m1 basi 3800`
 
 If the input for the mission was not clear, the bot offers you the possible matches to select from.
 
