@@ -2,8 +2,6 @@
 [![license](https://img.shields.io/github/license/leyren/bdo-questbot.svg)](https://github.com/Leyren/bdo-questbot/blob/master/LICENSE)
 [![GitHub package version](https://img.shields.io/github/package-json/v/leyren/bdo-guildbot.svg)](https://github.com/Leyren/bdo-questbot/blob/master/package.json)
 
-![Statistics](http://bdo-questbot.glitch.me/stats)
-
 This bot allows you to manage your guild missions within your Discord server, displaying currently running missions including their server and time.
 
 The default prefix for the bot is `~`.
@@ -11,6 +9,10 @@ The default prefix for the bot is `~`.
 Check out the bot on top.gg: https://top.gg/bot/665515707689205784
 
 Or add the bot directly: https://discordapp.com/api/oauth2/authorize?client_id=665515707689205784&permissions=8&scope=bot
+
+# Current statistics
+
+[![Statistics](http://bdo-questbot.glitch.me/stats)](http://bdo-questbot.glitch.me/stats)
 
 # Commands
 | Usage | Alias | Effect  |
