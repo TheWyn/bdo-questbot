@@ -249,6 +249,18 @@ module.exports = {
     ["Get [Guild] Fine Texture Ash Plywood, [Guild] Golden Copper Ingot, and [Guild] Fresh Chicken from Rosa Kloko in Velia; Trade [Guild] Balenosian Specialty to Roig Mills in Heidel", 150],
     ["Get [Guild] Fragrant Acacia Plywood, [Guild] Pure Zinc Ingot, and [Guild] Sharp Cinnamon from Elswin in Altinova; Trade [Guild] Mediahn Specialty to Givel Taric in Valencia City", 150],
     ["Get [Guild] Hard Pine Plywood, [Guild] Pure Lead Ingot, and [Guild] Soft Fleece from Roig Mills in Heidel; Trade [Guild] Serendian Specialty to Demiel Batian in Calpheon City", 150],
-    ["Get [Guild] Thin Fir Plywood, [Guild] Barbaric Tin Ingot, and [Guild] Hardened Coal from Demiel Batian in Calpheon City; Trade [Guild] Calpheonian Specialty to Elswin in Altinova.", 150]
+    ["Get [Guild] Thin Fir Plywood, [Guild] Barbaric Tin Ingot, and [Guild] Hardened Coal from Demiel Batian in Calpheon City; Trade [Guild] Calpheonian Specialty to Elswin in Altinova.", 150],
+    ["Barter 25 times", 60],
+    ["Barter 50 times", 120],
+    ["Barter 75 times", 180],
+    ["Barter 150 times", 240],
+    ["Get Milk x1000", 120],
+    ["Get Milk x2000", 150],
+    ["Get Milk x3000", 180],
+    ["Get Milk x4500", 210],
+    ["Gather Weeds x800", 120],
+    ["Gather Weeds x1600", 150],
+    ["Gather Weeds x1800, Silver Azalea x240, Sunrise Herb x240", 180],
+    ["Gather Weeds x2800, Gather Silver Azalea x420, Gather Sunrise Herb x420", 210]
 ]
 };
