@@ -261,6 +261,22 @@ module.exports = {
     ["Gather Weeds x800", 120],
     ["Gather Weeds x1600", 150],
     ["Gather Weeds x1800, Silver Azalea x240, Sunrise Herb x240", 180],
-    ["Gather Weeds x2800, Gather Silver Azalea x420, Gather Sunrise Herb x420", 210]
+    ["Gather Weeds x2800, Gather Silver Azalea x420, Gather Sunrise Herb x420", 210],
+    ["Mission Objective: Gather Wild Grass x1600", 120],
+    ["Mission Objective: Gather Wild Grass x3200", 150],
+    ["Mission Objective: Gather Wild Grass x3600, Gather Silver Azalea x240, Gather Sunrise Herb x240", 180],
+    ["Mission Objective: Gather Wild Grass x5600, Silver Azalea x420, Gather Sunrise Herb x420", 210],
+    ["Mission Objective: Defeat the Ancient Weapons in Hystria Ruins x700", 120],
+    ["Mission Objective: Defeat the Ancient Weapons in Hystria Ruins x1050", 180],
+    ["Mission Objective: Defeat the Ancient Weapons in Hystria Ruins x1540", 210],
+    ["Mission Objective: Defeat the Ancient Weapons in Hystria Ruins x2100", 240],
+    ["Mission Objective: Defeat the Ancient Civilization Followers in Aakman Temple x1000", 120],
+    ["Mission Objective: Defeat the Ancient Civilization Followers in Aakman Temple x1500", 180],
+    ["Mission Objective: Defeat the Ancient Civilization Followers in Aakman Temple x2200", 210],
+    ["Mission Objective: Defeat the Ancient Civilization Followers in Aakman Temple x3000", 240],
+    ["Mission Objective: Defeat depraved harbingers at Star's End x1000", 120],
+    ["Mission Objective: Defeat depraved harbingers at Star's End x1500", 180],
+    ["Mission Objective: Defeat depraved harbingers at Star's End x2200", 210],
+    ["Mission Objective: Defeat depraved harbingers at Star's End x3000", 240]
 ]
 };
