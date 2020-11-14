@@ -22,7 +22,7 @@ notify.on("role", "Set the notification role", async function (ctx) {
 
     const result = reg.exec(ctx.args[0]);
     if (!result) return ctx.message.reply(`Invalid role ${ctx.args[0]}`);
-    const r = ctx.guild.roles.find(r => r.id === result[1]);
+    const r = ctx.guild.roles.cache.find(r => r.id === result[1]);
     ctx.settings.notifyRole = `<@&${r.id}>`;
     ctx.self.settings.set(ctx.guild.id, ctx.settings);
     return ctx.message.reply(`Set notify role to ${r}.`);
@@ -32,14 +32,14 @@ notify.on("role", "Set the notification role", async function (ctx) {
 notify.on("on", "Turn notifications on.", async ctx => {
     const role = questHandler.resolveRole(ctx);
     if (!role) return ctx.message.reply(`No valid notification role set.`);
-    ctx.message.member.addRole(role);
+    await ctx.message.member.roles.add(role);
     return ctx.message.reply('Notifications turned on.');
 });
 
 notify.on("off", "Turn notifications off.", async ctx => {
     const role = questHandler.resolveRole(ctx);
     if (!role) return ctx.message.reply(`No valid notification role set.`);
-    ctx.message.member.removeRole(role);
+    await ctx.message.member.roles.remove(role);
     return ctx.message.reply('Notifications turned off.');
 });
 
@@ -70,10 +70,10 @@ notify.on("all", "Turn on/off notifications for everybody.", async ctx => {
 
     switch (ctx.args[0].toLowerCase()) {
         case 'on':
-            await ctx.guild.members.filter(m => !m.user.bot).array().forEach(member => member.addRoles([role.id]));
+            await ctx.guild.members.filter(m => !m.user.bot).array().forEach(member => member.roles.add([role.id]));
             return ctx.message.reply(`Turning on notifications for everybody... this may take a while.`);
         case 'off':
-            await ctx.guild.members.filter(m => !m.user.bot).array().forEach(member => member.removeRoles([role.id]));
+            await ctx.guild.members.filter(m => !m.user.bot).array().forEach(member => member.roles.remove([role.id]));
             return ctx.message.reply(`Turning off notifications for everybody... this may take a while.`);
         default:
             return usage();

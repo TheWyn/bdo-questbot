@@ -79,13 +79,13 @@ function removeMission(guild, index) {
 
 function getChannel(guild, settings) {
     if (!settings.questChannel) return undefined;
-    return guild.channels.find(v => v.type === `text` && v.id === chanReg.exec(settings.questChannel)[1]);
+    return guild.channels.cache.find(v => v.type === `text` && v.id === chanReg.exec(settings.questChannel)[1]);
 }
 
 function updateChannel(ctx, update) {
     const result = chanReg.exec(update);
     if (!result) return undefined;
-    const ch = ctx.guild.channels.find(c => c.id === result[1] && c.type === `text`);
+    const ch = ctx.guild.channels.cache.find(c => c.id === result[1] && c.type === `text`);
     if (ch) {
         const old = getChannel(ctx.guild, ctx.settings);
         // Delete the old message
@@ -145,7 +145,7 @@ function extension(client) {
     async function update() {
         curr = moment();
         for (var [id, quests] of lists.entries()) {
-            const guild = client.guilds.find(g => g.id === id);
+            const guild = client.guilds.cache.find(g => g.id === id);
             if (!guild) {
                 lists.delete(id);
                 continue;

@@ -25,7 +25,7 @@ quest.on("add", "Add a guild quest to the list.", async function (ctx) {
     const questOptions = questHandler.getMissions(name);
 
     if (serverOptions.length > 1) return ctx.message.reply(`Unclear server name ${server}.`);
-    if (serverOptions.length == 0) return ctx.message.reply(`Unknown server ${server}.`);
+    if (serverOptions.length === 0) return ctx.message.reply(`Unknown server ${server}.`);
     var r;
     if (questOptions.length > 1) {
         const embed = format.embed();
@@ -40,7 +40,7 @@ quest.on("add", "Add a guild quest to the list.", async function (ctx) {
         } else {
             return ctx.message.reply(`Invalid value. Has to be between 0 and ${questOptions.length}`);
         }
-    } else if (questOptions.length == 1) {
+    } else if (questOptions.length === 1) {
         r = questOptions[0];
     } else {
         return ctx.message.reply(`No matches for ${name.join(" ")} found.`);
