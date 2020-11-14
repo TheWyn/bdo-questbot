@@ -49,9 +49,7 @@ quest.on("add", "Add a guild quest to the list.", async function (ctx) {
     const q = new Quest(serverOptions[0], r[0], moment().add(r[1], 'minutes'));
     if (questHandler.addMission(ctx.guild, q)) {
         let content = `Add guild mission ${q.description} on server ${q.server}.`;
-
         ctx.message.reply(content)
-
         const channel = questHandler.getChannel(ctx.guild, ctx.settings);
         if (channel) {
             const role = questHandler.resolveRole(ctx);
