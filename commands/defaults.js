@@ -88,6 +88,6 @@ defaults.default = (context) => {
     Object.entries(settings).forEach(([key, value]) => {
         embed.addField(key, format.prettyPrint(value), true);
     });
-    message.channel.send(embed);
+    return message.channel.send(embed);
 };
 

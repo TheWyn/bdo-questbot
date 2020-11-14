@@ -39,7 +39,7 @@ help.default = (ctx) => {
         });
 
         embed.setDescription(output);
-        ctx.message.channel.send(embed);
+        return ctx.message.channel.send(embed);
     } else {
         // Show individual command's help.
         let c = ctx.args[0];
@@ -67,7 +67,7 @@ help.default = (ctx) => {
         }
 
         embed.setDescription(output);
-        ctx.message.channel.send(embed);
+        return ctx.message.channel.send(embed);
     }
 };
 

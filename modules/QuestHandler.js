@@ -13,7 +13,7 @@ function resolveRole(ctx) {
     if (!ctx.settings.notifyRole) return undefined;
     const id = roleReg.exec(ctx.settings.notifyRole);
     if (!id) return undefined;
-    return ctx.guild.roles.find(r => r.id === id[1]);
+    return ctx.guild.roles.cache.find(r => r.id === id[1]);
 }
 
 const lists = new Enmap({name: "quests"});
@@ -25,7 +25,7 @@ for (var [id, quests] of lists.entries()) {
 
 function getMissions(words) {
     return QuestData.missions.filter(([desc, count]) => {
-        const descWords = desc.split(/\s+/).map((v, _) => v.toUpperCase().replace(/[\.,;:\(\)]/g, ''));
+        const descWords = desc.split(/\s+/).map((v, _) => v.toUpperCase().replace(/[.,;:()]/g, ''));
         return words.map(w => w.toUpperCase())
             .every(w => descWords.some(w2 => w2 === w || w2.match(/X\d+/) && w2.substring(1) === w || w.length > 2 && w2.includes(w)));
     });
@@ -187,7 +187,7 @@ function extension(client) {
 
                 // Embed has been deleted, repost.
                 if (msg.embeds.length === 0) {
-                    msg.delete();
+                    await msg.delete();
                     await send();
                 } else {
                     if (pin && !msg.pinned) await msg.pin();

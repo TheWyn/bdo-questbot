@@ -15,7 +15,7 @@ const permissions = [
             if (context.guild && context.settings.modRole) {
                 const id = reg.exec(context.settings.modRole);
                 if (!id) return false;
-                const role = context.guild.roles.find(r => r.id === id[1]);
+                const role = context.guild.roles.cache.find(r => r.id === id[1]);
                 return role && context.message.member.roles.cache.has(role.id);
             }
             return false;
@@ -28,7 +28,7 @@ const permissions = [
             if (context.guild && context.settings.adminRole) {
                 const id = reg.exec(context.settings.adminRole);
                 if (!id) return false;
-                const role = context.guild.roles.find(r => r.id === id[1]);
+                const role = context.guild.roles.cache.find(r => r.id === id[1]);
                 return role && context.message.member.roles.cache.has(role.id);
             }
             return false;

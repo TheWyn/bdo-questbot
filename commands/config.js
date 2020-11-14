@@ -17,7 +17,7 @@ config.default = function (ctx) {
     Object.entries(ctx.settings).forEach(([key, value]) => {
         embed.addField(key, format.prettyPrint(value), true);
     });
-    ctx.message.channel.send(embed);
+    return ctx.message.channel.send(embed);
 }
 
 config.on("restore", "Reset all settings back to default", async function (ctx) {
