@@ -1,5 +1,5 @@
 module.exports = {
-    serverNames: ["Olvia", "Valencia", "Balenos", "Arsha", "Mediah", "Calpheon", "Velia", "Serendia", "Kamasylvia"],
+    serverNames: ["Olvia", "Valencia", "Balenos", "Arsha", "Mediah", "Calpheon", "Velia", "Serendia", "Kamasylvia", "Season"],
     missions: [
         ["Defeat Mediah Abandoned Iron Mine Barbarian x600", 150],
         ["Defeat Crescent Shrine Argos Saunil x1026", 120],
@@ -281,6 +281,10 @@ module.exports = {
         ["Defeat Forest Ronaros in the Tooth Fairy Forest x1000", 120],
         ["Defeat Forest Ronaros in the Tooth Fairy Forest x2000", 180],
         ["Defeat Forest Ronaros in the Tooth Fairy Forest x3000", 210],
-        ["Defeat Forest Ronaros in the Tooth Fairy Forest x4000", 240]
+        ["Defeat Forest Ronaros in the Tooth Fairy Forest x4000", 240],
+        ["Defeat Thornwood Ahibs x1000", 120],
+        ["Defeat Thornwood Ahibs x1500", 180],
+        ["Defeat Thornwood Ahibs x2200", 210],
+        ["Defeat Thornwood Ahibs x3000", 240]
     ]
 };
