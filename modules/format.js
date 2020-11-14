@@ -7,20 +7,23 @@ exports.usage = (ctx, cmds, args) => {
 };
 
 // Time formatting
-exports.interval = i => i.format('HH:mm:ss', { trim: false });
+exports.interval = i => i.format('HH:mm:ss', {trim: false});
 
 // Centralised scheme for embeds to use in other modules.
-exports.embed = () => new Discord.RichEmbed()
-    .setColor(0xFF0092)
+exports.embed = () => new Discord.MessageEmbed()
+    .setColor(0x0EC2E8)
     .setTimestamp();
 
 // Simple human-readable print
 exports.prettyPrint = (value) => {
     if (value === undefined || value === null) return '/';
     if (Array.isArray(value)) return value.join(", ");
-     switch(typeof(value)){
-        case 'boolean': return value ? "Yes" : "No";
-        case 'object': return JSON.stringify(value, undefined, 2);
-        default: return value.toString();
+    switch (typeof (value)) {
+        case 'boolean':
+            return value ? "Yes" : "No";
+        case 'object':
+            return JSON.stringify(value, undefined, 2);
+        default:
+            return value.toString();
     }
 };

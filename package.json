@@ -7,7 +7,7 @@
     "start": "node index.js"
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=12"
   },
   "repository": {
     "type": "git",
@@ -24,12 +24,12 @@
   },
   "homepage": "https://github.com/Leyren/bdo-guildbot#readme",
   "dependencies": {
-    "better-sqlite3": "^5.4.0",
-    "chalk": "^2.4.2",
+    "better-sqlite3": "^6.0.1",
+    "chalk": "^4.0.0",
     "dedent-js": "^1.0.1",
-    "discord.js": "^11.5.1",
-    "enmap": "^5.0.0",
-    "inquirer": "^6.3.1",
+    "discord.js": "^12.4.1",
+    "enmap": "^5.2.4",
+    "inquirer": "^7.1.0",
     "moment": "^2.24.0",
     "moment-duration-format": "^2.3.2",
     "nedb": "^1.8.0"

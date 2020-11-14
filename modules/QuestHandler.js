@@ -1,4 +1,3 @@
-
 const Discord = require("discord.js");
 const moment = require("moment");
 const format = require("./format");
@@ -11,11 +10,10 @@ const chanReg = new RegExp(/<#(\d+)>/);
 const roleReg = new RegExp(/<@&(\d+)>/);
 
 function resolveRole(ctx) {
-  if (!ctx.settings.notifyRole) return undefined;
-  const id = roleReg.exec(ctx.settings.notifyRole);
-  if (!id) return undefined;
-  const role = ctx.guild.roles.find(r => r.id === id[1]);
-  return role;
+    if (!ctx.settings.notifyRole) return undefined;
+    const id = roleReg.exec(ctx.settings.notifyRole);
+    if (!id) return undefined;
+    return ctx.guild.roles.find(r => r.id === id[1]);
 }
 
 const lists = new Enmap({name: "quests"});
@@ -25,19 +23,19 @@ for (var [id, quests] of lists.entries()) {
 }
 
 
-function getMissions(words){
+function getMissions(words) {
     return QuestData.missions.filter(([desc, count]) => {
         const descWords = desc.split(/\s+/).map((v, _) => v.toUpperCase().replace(/[\.,;:\(\)]/g, ''));
         return words.map(w => w.toUpperCase())
-        .every(w => descWords.some(w2 => w2 === w || w2.match(/X\d+/) && w2.substring(1) === w || w.length > 2 && w2.includes(w)));
+            .every(w => descWords.some(w2 => w2 === w || w2.match(/X\d+/) && w2.substring(1) === w || w.length > 2 && w2.includes(w)));
     });
 }
 
-function getServers(input){
+function getServers(input) {
     const r = /^([a-zA-Z]+)(\d+)$/;
     const match = r.exec(input);
 
-    if (match){
+    if (match) {
         const [name, idx] = [match[1], match[2]];
         const resolved = QuestData.serverNames.filter(s => s.toUpperCase().startsWith(name.toUpperCase()));
         return resolved.map((v, d) => v + idx);
@@ -45,13 +43,13 @@ function getServers(input){
     return [];
 }
 
-function getActiveMissions(guild){
+function getActiveMissions(guild) {
     return lists.get(guild.id) || [];
 }
 
-function addMission(guild, mission){
+function addMission(guild, mission) {
     const missions = getActiveMissions(guild);
-    if (missions.length <= 10){
+    if (missions.length <= 10) {
         missions.push(mission);
         lists.set(guild.id, missions);
         return true;
@@ -59,9 +57,9 @@ function addMission(guild, mission){
     return false;
 }
 
-function setMission(guild, index, mission){
+function setMission(guild, index, mission) {
     const missions = getActiveMissions(guild);
-    if (index >= 0 && index < missions.length){
+    if (index >= 0 && index < missions.length) {
         missions[index] = mission;
         lists.set(guild.id, missions);
         return true;
@@ -69,9 +67,9 @@ function setMission(guild, index, mission){
     return false;
 }
 
-function removeMission(guild, index){
+function removeMission(guild, index) {
     const missions = getActiveMissions(guild);
-    if (index >= 0 && index < missions.length){
+    if (index >= 0 && index < missions.length) {
         missions.splice(index, 1);
         lists.set(guild.id, missions);
         return true;
@@ -81,73 +79,74 @@ function removeMission(guild, index){
 
 function getChannel(guild, settings) {
     if (!settings.questChannel) return undefined;
-    return guild.channels.find(v => v.type == `text` && v.id == chanReg.exec(settings.questChannel)[1]);
+    return guild.channels.find(v => v.type === `text` && v.id === chanReg.exec(settings.questChannel)[1]);
 }
 
-function updateChannel(ctx, update){
+function updateChannel(ctx, update) {
     const result = chanReg.exec(update);
     if (!result) return undefined;
-    const ch = ctx.guild.channels.find(c => c.id == result[1] && c.type == `text`);
-    if (ch){
-      const old = getChannel(ctx.guild, ctx.settings);
-      // Delete the old message
-      if (old && messages.has(ctx.guild.id)){
-        old.fetchMessage(messages.get(id))
-        .then(msg => msg.delete().catch(() => {}))
-        .catch(() => {});
-      }
-      ctx.settings.questChannel = `<#${ch.id}>`;
-      ctx.self.settings.set(ctx.guild.id, ctx.settings);
-      return ctx.settings.questChannel;
+    const ch = ctx.guild.channels.find(c => c.id === result[1] && c.type === `text`);
+    if (ch) {
+        const old = getChannel(ctx.guild, ctx.settings);
+        // Delete the old message
+        if (old && messages.has(ctx.guild.id)) {
+            old.messages.fetch(messages.get(id))
+                .then(msg => msg.delete().catch(() => {
+                }))
+                .catch(() => {
+                });
+        }
+        ctx.settings.questChannel = `<#${ch.id}>`;
+        ctx.self.settings.set(ctx.guild.id, ctx.settings);
+        return ctx.settings.questChannel;
     }
     return undefined;
 }
 
 // Delete the message so that it will be reposted on the next update
-function triggerRepost(ctx){
+function triggerRepost(ctx) {
     const settings = ctx.settings;
     if (!settings.questChannel) return;
     const channel = getChannel(ctx.guild, settings);
     if (!channel || !messages.has(ctx.guild.id)) return;
-    channel.fetchMessage(messages.get(ctx.guild.id))
-    .then(async msg => {
-        const m = await channel.send(makeMessage(ctx.guild, moment())).then(msg => {
-            if (settings.pinQuests) msg.pin();
+    channel.messages.fetch(messages.get(ctx.guild.id))
+        .then(async msg => {
+            const m = await channel.send(makeMessage(ctx.guild, moment())).then(msg => {
+                if (settings.pinQuests) msg.pin();
+                return msg;
+            });
+            messages.set(ctx.guild.id, m.id);
             return msg;
-        });
-        messages.set(ctx.guild.id, m.id);
-        return msg;
-    }).then(msg => msg.delete()).catch(() => {});
+        }).then(msg => msg.delete()).catch(() => {
+    });
 }
 
-function makeMessage(guild, curr){
+function makeMessage(guild, curr) {
     const missions = getActiveMissions(guild);
     let msg = ``;
 
-    if (missions.length > 0){
+    if (missions.length > 0) {
         missions.forEach((v, idx) => {
             msg += `<${idx + 1}> **[${v.server}]** ${v.description} --- Time left: ${format.interval(moment.duration(v.end.diff(curr)))}.\n`;
         });
-    }else{
+    } else {
         msg = `No active missions.`;
     }
 
-    const embed = format.embed()
+    return format.embed()
         .setTitle('Current Missions')
         .setDescription(msg);
-
-    return embed;
 }
 
 
-function extension(client){
+function extension(client) {
     let curr = moment();
 
     async function update() {
         curr = moment();
         for (var [id, quests] of lists.entries()) {
             const guild = client.guilds.find(g => g.id === id);
-            if (!guild){
+            if (!guild) {
                 lists.delete(id);
                 continue;
             }
@@ -179,26 +178,26 @@ function extension(client){
                 return msg;
             }
 
-            if (!messages.has(id)){
+            if (!messages.has(id)) {
                 await send();
-            }else{
+            } else {
                 // If message not existing (got deleted), resend.
-                const msg = await channel.fetchMessage(messages.get(id))
+                const msg = await channel.messages.fetch(messages.get(id))
                     .catch(async () => await send());
 
                 // Embed has been deleted, repost.
-                if (msg.embeds.length == 0){
-                        msg.delete();
-                        await send();
+                if (msg.embeds.length == 0) {
+                    msg.delete();
+                    await send();
                 } else {
-                    if (pin && !msg.pinned)  msg.pin();
-                    else if (!pin && msg.pinned)  msg.unpin();
+                    if (pin && !msg.pinned) msg.pin();
+                    else if (!pin && msg.pinned) msg.unpin();
                     msg.edit(embed);
                 }
             }
-            
-          }
-          client.setTimeout(update, interval);
+
+        }
+        client.setTimeout(update, interval);
     }
 
     client.on("ready", () => client.setTimeout(update, interval));
