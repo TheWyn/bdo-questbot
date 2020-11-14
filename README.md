@@ -6,14 +6,6 @@ This bot allows you to manage your guild missions within your Discord server, di
 
 The default prefix for the bot is `~`.
 
-Check out the bot on top.gg: https://top.gg/bot/665515707689205784
-
-Or add the bot directly: https://discordapp.com/api/oauth2/authorize?client_id=665515707689205784&permissions=8&scope=bot
-
-# Current statistics
-
-[![Statistics](http://bdo-questbot.glitch.me/stats)](http://bdo-questbot.glitch.me/stats)
-
 # Commands
 | Usage | Alias | Effect  |
 |---|---|---|
