@@ -5,7 +5,7 @@ const defaultSettings = {
     "questChannel": null,
     "notifyRole": null,
     "notifyDefault": false,
-    "pinQuests": true
+    "pinQuests": false
 };
 
 module.exports = defaultSettings;

@@ -186,13 +186,13 @@ function extension(client) {
                     .catch(async () => await send());
 
                 // Embed has been deleted, repost.
-                if (msg.embeds.length == 0) {
+                if (msg.embeds.length === 0) {
                     msg.delete();
                     await send();
                 } else {
-                    if (pin && !msg.pinned) msg.pin();
-                    else if (!pin && msg.pinned) msg.unpin();
-                    msg.edit(embed);
+                    if (pin && !msg.pinned) await msg.pin();
+                    else if (!pin && msg.pinned) await msg.unpin();
+                    await msg.edit(embed);
                 }
             }
 
