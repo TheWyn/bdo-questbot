@@ -1,6 +1,6 @@
 {
   "name": "bdo-questbot",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A discord bot for Black Desert Online, to manage guild missions in your server.",
   "main": "index.js",
   "scripts": {
@@ -11,20 +11,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Leyren/bdo-guildbot.git"
+    "url": "git+https://github.com/TheWyn/bdo-questbot.git"
   },
   "author": "Leyren <leyren.dev@gmail.com>",
   "contributors": [
     "York (http://anidiots.guide)",
-    "Evelyne Lachance (http://evie.codes)"
+    "Evelyne Lachance (http://evie.codes)",
+    "Wyn#0004 (https://github.com/TheWyn)"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Leyren/bdo-guildbot/issues"
+    "url": "https://github.com/TheWyn/bdo-questbot/issues"
   },
-  "homepage": "https://github.com/Leyren/bdo-guildbot#readme",
+  "homepage": "https://github.com/TheWyn/bdo-questbot#readme",
   "dependencies": {
-    "better-sqlite3": "^6.0.1",
+    "better-sqlite3": "^7.1.1",
     "chalk": "^4.0.0",
     "dedent-js": "^1.0.1",
     "discord.js": "^12.4.1",
