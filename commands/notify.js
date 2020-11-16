@@ -17,8 +17,7 @@ const error = () => 'Not enough permissions to set notification role. Please che
 const reg = new RegExp(/<@&(\d+)>/);
 
 notify.on("role", "Set the notification role", async function (ctx) {
-    const usage = () => ctx.message.reply(format.usage(ctx, [notify.name, ctx.action], [`@role`]));
-    if (ctx.args.length < 1) return usage();
+    if (ctx.args.length < 1) return await ctx.message.reply(format.usage(ctx, [notify.name, ctx.action], [`@role`]));
 
     const result = reg.exec(ctx.args[0]);
     if (!result) return ctx.message.reply(`Invalid role ${ctx.args[0]}`);
@@ -31,20 +30,20 @@ notify.on("role", "Set the notification role", async function (ctx) {
 
 notify.on("on", "Turn notifications on.", async ctx => {
     const role = questHandler.resolveRole(ctx);
-    if (!role) return ctx.message.reply(`No valid notification role set.`);
+    if (!role) return await ctx.message.reply(`No valid notification role set.`);
     await ctx.message.member.roles.add(role);
-    return ctx.message.reply('Notifications turned on.');
+    return await ctx.message.reply('Notifications turned on.');
 });
 
 notify.on("off", "Turn notifications off.", async ctx => {
     const role = questHandler.resolveRole(ctx);
-    if (!role) return ctx.message.reply(`No valid notification role set.`);
+    if (!role) return await ctx.message.reply(`No valid notification role set.`);
     await ctx.message.member.roles.remove(role);
-    return ctx.message.reply('Notifications turned off.');
+    return await ctx.message.reply('Notifications turned off.');
 });
 
 notify.on("default", "Default setting for notifications for new members.", async ctx => {
-    const usage = () => ctx.message.reply(format.usage(ctx, [notify.name, ctx.action], [`on | off`]));
+    const usage = async () => await ctx.message.reply(format.usage(ctx, [notify.name, ctx.action], [`on | off`]));
     if (ctx.args.length < 1) return usage();
 
     switch (ctx.args[0].toLowerCase()) {
@@ -58,11 +57,11 @@ notify.on("default", "Default setting for notifications for new members.", async
             return usage();
     }
     ctx.self.settings.set(ctx.guild.id, ctx.settings);
-    return ctx.message.reply(`Set default for notifications to ${ctx.args[0]}.`);
+    return await ctx.message.reply(`Set default for notifications to ${ctx.args[0]}.`);
 }, "Moderator");
 
 notify.on("all", "Turn on/off notifications for everybody.", async ctx => {
-    const usage = () => ctx.message.reply(format.usage(ctx, [notify.name, ctx.action], [`on | off`]));
+    const usage = async () => await ctx.message.reply(format.usage(ctx, [notify.name, ctx.action], [`on | off`]));
     if (ctx.args.length < 1) return usage();
 
     const role = questHandler.resolveRole(ctx);
@@ -71,10 +70,10 @@ notify.on("all", "Turn on/off notifications for everybody.", async ctx => {
     switch (ctx.args[0].toLowerCase()) {
         case 'on':
             await ctx.guild.members.filter(m => !m.user.bot).array().forEach(member => member.roles.add([role.id]));
-            return ctx.message.reply(`Turning on notifications for everybody... this may take a while.`);
+            return await ctx.message.reply(`Turning on notifications for everybody... this may take a while.`);
         case 'off':
             await ctx.guild.members.filter(m => !m.user.bot).array().forEach(member => member.roles.remove([role.id]));
-            return ctx.message.reply(`Turning off notifications for everybody... this may take a while.`);
+            return await ctx.message.reply(`Turning off notifications for everybody... this may take a while.`);
         default:
             return usage();
     }

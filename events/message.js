@@ -14,7 +14,7 @@ module.exports = async (client, message) => {
     // Checks if the bot was mentioned, with no message after it, returns the prefix.
     const prefixMention = new RegExp(`^<@!?${client.user.id}>( |)$`);
     if (message.content.match(prefixMention)) {
-        return message.reply(`My prefix on this guild is \`${settings.prefix}\``);
+        return await message.reply(`My prefix on this guild is \`${settings.prefix}\``);
     }
 
     // Ignore all messages which are not starting with the prefix
@@ -32,12 +32,12 @@ module.exports = async (client, message) => {
     const cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command));
 
     if (!cmd)
-        return message.reply(`Unknown command ${command}`);
+        return await message.reply(`Unknown command ${command}`);
 
     // Some commands may not be useable in DMs. This check prevents those commands from running
     // and return a friendly error message.
     if (cmd && !message.guild && cmd.guildOnly)
-        return message.channel.send("This command is unavailable via private message. Please run this command in a server.");
+        return await message.channel.send("This command is unavailable via private message. Please run this command in a server.");
 
     const context = {
         self: client,
@@ -52,7 +52,7 @@ module.exports = async (client, message) => {
     const level = permissions.fromContext(context);
     const requiredLevel = permissions.fromName(cmd.permLevel);
     if (level < requiredLevel) {
-        return message.channel.send(`You do not have permission to use this command.
+        return await message.channel.send(`You do not have permission to use this command.
   Your permission level is ${level} (${permissions.list[level].name})
   This command requires level ${requiredLevel} (${cmd.permLevel})`);
     }

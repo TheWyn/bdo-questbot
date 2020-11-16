@@ -3,6 +3,7 @@ const format = require("../modules/format.js");
 const moment = require("moment");
 require("moment-duration-format");
 const Command = require("../modules/Command.js");
+const pjson = require('../package.json');
 
 const stats = new Command();
 
@@ -25,7 +26,7 @@ stats.default = async (ctx) => {
         .addField("Users", ctx.self.users.cache.size.toLocaleString(), true)
         .addField("Servers", ctx.self.guilds.cache.size.toLocaleString(), true)
         .addField("Channels", ctx.self.channels.cache.size.toLocaleString(), true)
-        .addField("Running on", `Discord.js v${version}\nNode ${process.version}`)
+        .addField("Running on", `Quest Bot v${pjson.version}\nDiscord.js v${version}\nNode ${process.version}`)
         .addField("Source Code", `[GitHub Link](https://github.com/TheWyn/bdo-questbot)`)
         .setFooter("Developed by: Leyren#3099 / Wyn#0004");
     await ctx.message.channel.send(embed);

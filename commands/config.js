@@ -24,9 +24,9 @@ config.on("restore", "Reset all settings back to default", async function (ctx) 
     const response = await ctx.self.awaitConfirmation(ctx.message, `Are you sure you want to restore the default configuration?`);
     if (response) {
         ctx.self.settings.delete(ctx.guild.id);
-        ctx.message.reply(`Successfully restored default configuration.`);
+        await ctx.message.reply(`Successfully restored default configuration.`);
     } else {
-        ctx.message.reply(`Action cancelled.`);
+        await ctx.message.reply(`Action cancelled.`);
     }
 }, "Administrator");
 

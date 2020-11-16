@@ -8,7 +8,7 @@ shutdown.setName("shutdown")
     .setAliases([])
     .setPermLevel("Bot Owner")
     .setCategory("System")
-    .setDescription("Shuts down the bot. If running under PM2, bot will restart automatically.");
+    .setDescription("Shuts down the bot. If running under PM2 or configured through Systemd, will restart automatically.");
 
 shutdown.default = async (ctx) => {
     await ctx.message.reply("Bot is shutting down.");
