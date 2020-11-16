@@ -4,6 +4,8 @@
 
 This bot allows you to manage your guild missions within your Discord server, displaying currently running missions including their server and time.
 
+Add the improved bot directly: https://discord.com/oauth2/authorize?client_id=665134638137737249&scope=bot&permissions=224256
+
 The default prefix for the bot is `~`.
 
 # Commands
