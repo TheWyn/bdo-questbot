@@ -46,8 +46,8 @@ function getActiveMissions(guild) {
     return lists.get(guild.id) || [];
 }
 
-function getList() {
-    return lists;
+function getListDelete(id) {
+    return lists.delete(id);
 }
 
 function addMission(guild, mission) {
@@ -222,5 +222,5 @@ module.exports = {
     getChannel: getChannel,
     triggerRepost: triggerRepost,
     resolveRole: resolveRole,
-    getLists: getList
+    getListsDelete: getListDelete
 }
