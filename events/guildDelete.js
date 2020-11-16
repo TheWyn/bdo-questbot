@@ -7,5 +7,5 @@ module.exports = (client, guild) => {
 
     // If the settings Enmap contains any guild overrides, remove them.
     client.settings.delete(guild.id);
-    questHandler.lists.delete(guild.id);
+    questHandler.getLists().delete(guild.id)
 };

@@ -15,7 +15,6 @@ function resolveRole(ctx) {
     if (!id) return undefined;
     return ctx.guild.roles.cache.find(r => r.id === id[1]);
 }
-
 const lists = new Enmap({name: "quests"});
 const messages = new Enmap({name: "messages"});
 for (var [id, quests] of lists.entries()) {
@@ -45,6 +44,10 @@ function getServers(input) {
 
 function getActiveMissions(guild) {
     return lists.get(guild.id) || [];
+}
+
+function getList() {
+    return lists;
 }
 
 function addMission(guild, mission) {
@@ -218,5 +221,6 @@ module.exports = {
     updateChannel: updateChannel,
     getChannel: getChannel,
     triggerRepost: triggerRepost,
-    resolveRole: resolveRole
+    resolveRole: resolveRole,
+    getLists: getList
 }
