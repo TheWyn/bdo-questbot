@@ -17,7 +17,8 @@ const error = () => 'Not enough permissions to set notification role. Please che
 const reg = new RegExp(/<@&(\d+)>/);
 
 notify.on("role", "Set the notification role", async function (ctx) {
-    if (ctx.args.length < 1) return await ctx.message.reply(format.usage(ctx, [notify.name, ctx.action], [`@role`]));
+    const usage = async () => await ctx.message.reply(format.usage(ctx, [notify.name, ctx.action], [`@role`]));
+    if (ctx.args.length < 1) return usage();
 
     const result = reg.exec(ctx.args[0]);
     if (!result) return ctx.message.reply(`Invalid role ${ctx.args[0]}`);
