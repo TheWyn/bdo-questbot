@@ -22,7 +22,7 @@ stats.default = async (ctx) => {
     embed.setTitle("Statistics")
         .addField("Memory Usage", `${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB`, true)
         .addField("Uptime", duration, true)
-        .addField('\u200b', '\u200b')
+        .addField('\u200b', '\u200b', true)
         .addField("Users", ctx.self.users.cache.size.toLocaleString(), true)
         .addField("Servers", ctx.self.guilds.cache.size.toLocaleString(), true)
         .addField("Channels", ctx.self.channels.cache.size.toLocaleString(), true)
