@@ -6,7 +6,9 @@ This bot allows you to manage your guild missions within your Discord server, di
 
 Add the improved bot directly: https://discord.com/oauth2/authorize?client_id=665134638137737249&scope=bot&permissions=224256
 
-The default prefix for the bot is `~`.
+If you're a nutjob and run two guilds: https://discord.com/oauth2/authorize?client_id=780212379749056522&scope=bot&permissions=224256
+
+Main bot prefix is `~`, nutjobs get `-`.
 
 # Commands
 | Usage | Alias | Effect  |
