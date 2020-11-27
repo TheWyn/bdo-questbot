@@ -209,13 +209,6 @@ function extension(client) {
     client.on("message", msg => {
         if (msg.type === `PINS_ADD` && msg.author.id === `665515707689205784`) msg.delete();
     });
-
-    client.on('shardError', async (error) => {
-        client.logger.warn("shardError, attempting restart if systemd/pm2 setup: " + error)
-        await Promise.all(client.self.commands.map(cmd => client.self.unloadCommand(cmd)));
-        process.exit(0);
-    });
-
 }
 
 module.exports = {

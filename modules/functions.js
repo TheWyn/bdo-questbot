@@ -65,7 +65,7 @@ module.exports = (client) => {
     // `await client.wait(1000);` to "pause" for 1 second.
     client.wait = require("util").promisify(setTimeout);
 
-    // These 2 process methods will catch exceptions and give *more details* about the error and stack trace.
+    // These 3 process methods will catch exceptions and give *more details* about the error and stack trace.
     process.on("uncaughtException", (err) => {
         const errorMsg = err.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
         client.logger.error(`Uncaught Exception: ${errorMsg}`);
@@ -73,8 +73,17 @@ module.exports = (client) => {
         process.exit(1);
     });
 
-    process.on("unhandledRejection", err => {
-        client.logger.error(`Unhandled rejection: ${err}`);
+    process.on("unhandledRejection", async (err) => {
+        client.logger.error(`Unhandled rejection, attempting restart if systemd/pm2 setup:: ${err}`);
         console.error(err);
+        await Promise.all(client.self.commands.map(cmd => client.self.unloadCommand(cmd)));
+        process.exit(0)
+    });
+
+    client.on('shardError',  async (err) => {
+        client.logger.error(`Shard Error, attempting restart if systemd/pm2 setup:: ${err}`);
+        console.error(err);
+        await Promise.all(client.self.commands.map(cmd => client.self.unloadCommand(cmd)));
+        process.exit(0);
     });
 };
