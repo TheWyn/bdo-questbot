@@ -12,9 +12,7 @@ shutdown.setName("shutdown")
 
 shutdown.default = async (ctx) => {
     await ctx.message.reply("Bot is shutting down.");
-    await Promise.all(ctx.self.commands.map(cmd =>
-        ctx.self.unloadCommand(cmd)
-    ));
+    await Promise.all(ctx.self.commands.map(cmd => ctx.self.unloadCommand(cmd)));
     process.exit(0);
 };
 

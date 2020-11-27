@@ -15,6 +15,7 @@ function resolveRole(ctx) {
     if (!id) return undefined;
     return ctx.guild.roles.cache.find(r => r.id === id[1]);
 }
+
 const lists = new Enmap({name: "quests"});
 const messages = new Enmap({name: "messages"});
 for (var [id, quests] of lists.entries()) {
@@ -209,9 +210,10 @@ function extension(client) {
         if (msg.type === `PINS_ADD` && msg.author.id === `665515707689205784`) msg.delete();
     });
 
-    client.on('shardError', error => {
+    client.on('shardError', async (error) => {
         client.logger.warn("shardError, attempting restart if systemd/pm2 setup: " + error)
-        Promise.all(client.self.commands.map(cmd => client.self.unloadCommand(cmd))).then(r => process.exit(0));
+        await Promise.all(client.self.commands.map(cmd => client.self.unloadCommand(cmd)));
+        process.exit(0);
     });
 
 }
