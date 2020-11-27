@@ -147,7 +147,7 @@ function extension(client) {
 
     async function update() {
         curr = moment();
-        for (var [id, quests] of lists.entries()) {
+        for (let [id, quests] of lists.entries()) {
             const guild = client.guilds.cache.find(g => g.id === id);
             if (!guild) {
                 lists.delete(id);
@@ -208,6 +208,12 @@ function extension(client) {
     client.on("message", msg => {
         if (msg.type === `PINS_ADD` && msg.author.id === `665515707689205784`) msg.delete();
     });
+
+    client.on('shardError', error => {
+        client.logger.warn("shardError, attempting restart if systemd/pm2 setup: " + error)
+        Promise.all(client.self.commands.map(cmd => client.self.unloadCommand(cmd))).then(r => process.exit(0));
+    });
+
 }
 
 module.exports = {

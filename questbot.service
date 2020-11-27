@@ -1,0 +1,14 @@
+[Unit]
+Description=BDO Quest Bot DiscordJS
+After=multi-user.target
+[Service]
+WorkingDirectory=/home/Username/bdo-questbot
+User=Username
+Group=Username
+ExecStart=/usr/bin/node /home/Username/bdo-questbot/index.js
+Type=idle
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
