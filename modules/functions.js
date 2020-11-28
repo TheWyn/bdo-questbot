@@ -72,18 +72,18 @@ module.exports = (client) => {
         const errorMsg = err.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
         client.logger.error(`Uncaught Exception: ${errorMsg}`);
         console.error(err);
-        await client.destroy().then(client.login(process.env.client.config.token)
+        await client.destroy().then(client.login(process.env.client.config.token))
     });
 
     process.on("unhandledRejection", async (err) => {
         client.logger.error(`Unhandled rejection, attempting restart if systemd/pm2 setup:: ${err}`);
         console.error(err);
-        await client.destroy().then(client.login(process.env.client.config.token)
+        await client.destroy().then(client.login(process.env.client.config.token))
     });
 
     client.on('shardError',  async (err) => {
         client.logger.error(`Shard Error, attempting restart if systemd/pm2 setup:: ${err}`);
         console.error(err);
-        await client.destroy().then(client.login(client.config.token)
+        await client.destroy().then(client.login(process.env.client.config.token))
     });
 };
