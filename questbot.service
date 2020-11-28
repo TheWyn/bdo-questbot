@@ -1,6 +1,8 @@
 [Unit]
 Description=BDO Quest Bot DiscordJS
 After=multi-user.target
+After=network-online.target
+Wants=network-online.target
 [Service]
 WorkingDirectory=/home/Username/bdo-questbot
 User=Username
