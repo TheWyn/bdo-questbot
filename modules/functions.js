@@ -1,5 +1,5 @@
 const config = require("../config.js");
-client.config = config
+
 module.exports = (client) => {
     // getSettings merges the client defaults with the guild settings. guild settings in
     // enmap should only have *unique* overrides that are different from defaults.
@@ -64,26 +64,30 @@ module.exports = (client) => {
         return false;
     };
 
-    // `await client.wait(1000);` to "pause" for 1 second.
     client.wait = require("util").promisify(setTimeout);
 
-    // These 3 process methods will catch exceptions and give *more details* about the error and stack trace.
     process.on("uncaughtException", async (err) => {
         const errorMsg = err.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
         client.logger.error(`Uncaught Exception: ${errorMsg}`);
         console.error(err);
-        await client.destroy().then(client.login(process.env.client.config.token))
+        client.destroy();
+        console.info("Logging in again...")
+        return await client.login(config.token);
     });
 
     process.on("unhandledRejection", async (err) => {
-        client.logger.error(`Unhandled rejection, attempting restart if systemd/pm2 setup:: ${err}`);
+        client.logger.error(`Unhandled rejection, attempting restart:: ${err}`);
         console.error(err);
-        await client.destroy().then(client.login(process.env.client.config.token))
+        client.destroy();
+        console.info("Logging in again...")
+        return await client.login(config.token);
     });
 
-    client.on('shardError',  async (err) => {
-        client.logger.error(`Shard Error, attempting restart if systemd/pm2 setup:: ${err}`);
+    client.on('shardError', async (err) => {
+        client.logger.error(`Shard Error, attempting restart:: ${err}`);
         console.error(err);
-        await client.destroy().then(client.login(process.env.client.config.token))
+        client.destroy();
+        console.info("Logging in again...")
+        return await client.login(config.token);
     });
 };
