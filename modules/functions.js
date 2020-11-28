@@ -71,7 +71,7 @@ module.exports = (client) => {
         client.logger.error(`Uncaught Exception: ${errorMsg}`);
         console.error(err);
         client.destroy();
-        console.info("Logging in again...")
+        console.info("Logging in again...");
         return await client.login(config.token);
     });
 
@@ -79,7 +79,7 @@ module.exports = (client) => {
         client.logger.error(`Unhandled rejection, attempting restart:: ${err}`);
         console.error(err);
         client.destroy();
-        console.info("Logging in again...")
+        console.info("Logging in again...");
         return await client.login(config.token);
     });
 
@@ -87,7 +87,7 @@ module.exports = (client) => {
         client.logger.error(`Shard Error, attempting restart:: ${err}`);
         console.error(err);
         client.destroy();
-        console.info("Logging in again...")
+        console.info("Logging in again...");
         return await client.login(config.token);
     });
 };
