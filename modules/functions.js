@@ -1,4 +1,4 @@
-const config = require("./config.js");
+const config = require("../config.js");
 client.config = config
 module.exports = (client) => {
     // getSettings merges the client defaults with the guild settings. guild settings in
