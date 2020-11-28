@@ -1,3 +1,5 @@
+const config = require("./config.js");
+client.config = config
 module.exports = (client) => {
     // getSettings merges the client defaults with the guild settings. guild settings in
     // enmap should only have *unique* overrides that are different from defaults.
@@ -66,24 +68,22 @@ module.exports = (client) => {
     client.wait = require("util").promisify(setTimeout);
 
     // These 3 process methods will catch exceptions and give *more details* about the error and stack trace.
-    process.on("uncaughtException", (err) => {
+    process.on("uncaughtException", async (err) => {
         const errorMsg = err.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
         client.logger.error(`Uncaught Exception: ${errorMsg}`);
         console.error(err);
-        process.exit(1);
+        await client.destroy().then(client.login(process.env.client.config.token)
     });
 
     process.on("unhandledRejection", async (err) => {
         client.logger.error(`Unhandled rejection, attempting restart if systemd/pm2 setup:: ${err}`);
         console.error(err);
-        await Promise.all(client.self.commands.map(cmd => client.self.unloadCommand(cmd)));
-        process.exit(0)
+        await client.destroy().then(client.login(process.env.client.config.token)
     });
 
     client.on('shardError',  async (err) => {
         client.logger.error(`Shard Error, attempting restart if systemd/pm2 setup:: ${err}`);
         console.error(err);
-        await Promise.all(client.self.commands.map(cmd => client.self.unloadCommand(cmd)));
-        process.exit(0);
+        await client.destroy().then(client.login(client.config.token)
     });
 };
