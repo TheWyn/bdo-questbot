@@ -57,4 +57,8 @@ const init = async () => {
     await client.login(client.config.token);
 };
 
+module.exports = {
+    startUp: init
+}
+
 return init();
