@@ -1,6 +1,6 @@
 # BDO Guild Quest Bot
 [![GitHub package version](https://img.shields.io/github/package-json/v/TheWyn/bdo-questbot.svg)](https://github.com/TheWyn/bdo-questbot/blob/master/package.json)
-[![discordversion](https://img.shields.io/badge/Discord.js-12.4.1-blue)](https://github.com/discordjs/discord.js)
+[![discordversion](https://img.shields.io/badge/discord.js-12.4.1-blue)](https://github.com/discordjs/discord.js)
 [![license](https://img.shields.io/github/license/TheWyn/bdo-questbot.svg)](https://github.com/TheWyn/bdo-questbot/blob/master/LICENSE)
 
 
