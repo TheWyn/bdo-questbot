@@ -1,6 +1,8 @@
 # BDO Guild Quest Bot
-[![license](https://img.shields.io/github/license/TheWyn/bdo-questbot.svg)](https://github.com/TheWyn/bdo-questbot/blob/master/LICENSE)
 [![GitHub package version](https://img.shields.io/github/package-json/v/TheWyn/bdo-questbot.svg)](https://github.com/TheWyn/bdo-questbot/blob/master/package.json)
+[![discordversion](https://img.shields.io/badge/Discord.js-12.4.1-blue)](https://github.com/discordjs/discord.js)
+[![license](https://img.shields.io/github/license/TheWyn/bdo-questbot.svg)](https://github.com/TheWyn/bdo-questbot/blob/master/LICENSE)
+
 
 This bot allows you to manage your guild missions within your Discord server, displaying currently running missions including their server and time.
 
