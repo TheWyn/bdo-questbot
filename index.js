@@ -57,8 +57,12 @@ const init = async () => {
     await client.login(client.config.token);
 };
 
-module.exports = {
-    startUp: init
+function returnInit() {
+    return init();
 }
 
-return init();
+init();
+
+module.exports = {
+    returnInit: returnInit
+}
