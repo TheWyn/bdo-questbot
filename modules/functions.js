@@ -72,7 +72,7 @@ module.exports = (client) => {
         console.error(err);
         client.destroy();
         console.info("Logging in again...");
-        return qwerty.returnInit();
+        return qwerty.init();
     });
 
     process.on("unhandledRejection", async (err) => {
@@ -80,7 +80,7 @@ module.exports = (client) => {
         console.error(err);
         client.destroy();
         console.info("Logging in again...");
-        return qwerty.returnInit();
+        return qwerty.init();
     });
 
     client.on('shardError', async (err) => {
@@ -88,6 +88,6 @@ module.exports = (client) => {
         console.error(err);
         client.destroy();
         console.info("Logging in again...");
-        return qwerty.returnInit();
+        return qwerty.init();
     });
 };
