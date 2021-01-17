@@ -1,4 +1,4 @@
-const qwerty = require("../index.js")
+const {init} = require("../index.js")
 
 module.exports = (client) => {
     // getSettings merges the client defaults with the guild settings. guild settings in
@@ -72,7 +72,7 @@ module.exports = (client) => {
         console.error(err);
         client.destroy();
         console.info("Logging in again...");
-        return qwerty.init();
+        return init();
     });
 
     process.on("unhandledRejection", async (err) => {
@@ -80,7 +80,7 @@ module.exports = (client) => {
         console.error(err);
         client.destroy();
         console.info("Logging in again...");
-        return qwerty.init();
+        return init()
     });
 
     client.on('shardError', async (err) => {
@@ -88,6 +88,6 @@ module.exports = (client) => {
         console.error(err);
         client.destroy();
         console.info("Logging in again...");
-        return qwerty.init();
+        return init();
     });
 };
