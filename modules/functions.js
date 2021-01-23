@@ -1,5 +1,3 @@
-const {init} = require("../index.js")
-
 module.exports = (client) => {
     // getSettings merges the client defaults with the guild settings. guild settings in
     // enmap should only have *unique* overrides that are different from defaults.
@@ -66,28 +64,16 @@ module.exports = (client) => {
 
     client.wait = require("util").promisify(setTimeout);
 
-    process.on("uncaughtException", async (err) => {
-        const errorMsg = err.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
-        client.logger.error(`Uncaught Exception: ${errorMsg}`);
-        console.error(err);
-        client.destroy();
-        console.info("Logging in again...");
-        return init();
-    });
+  // These 2 process methods will catch exceptions and give *more details* about the error and stack trace.
+  process.on("uncaughtException", (err) => {
+    const errorMsg = err.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
+    client.logger.error(`Uncaught Exception: ${errorMsg}`);
+    console.error(err);
+    process.exit(0);
+  });
 
-    process.on("unhandledRejection", async (err) => {
-        client.logger.error(`Unhandled rejection, attempting restart:: ${err}`);
-        console.error(err);
-        client.destroy();
-        console.info("Logging in again...");
-        return init()
-    });
-
-    client.on('shardError', async (err) => {
-        client.logger.error(`Shard Error, attempting restart:: ${err}`);
-        console.error(err);
-        client.destroy();
-        console.info("Logging in again...");
-        return init();
-    });
+  process.on("unhandledRejection", err => {
+    client.logger.error(`Unhandled rejection: ${err}`);
+    console.error(err);
+  });
 };
