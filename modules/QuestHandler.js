@@ -5,7 +5,7 @@ const fs = require("fs");
 const Enmap = require("enmap");
 const QuestData = require("./QuestData.js");
 
-const interval = 20000
+const interval = 60000
 const chanReg = new RegExp(/<#(\d+)>/);
 const roleReg = new RegExp(/<@&(\d+)>/);
 
