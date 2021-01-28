@@ -90,6 +90,7 @@ quest.on("complete", "Complete/Remove a guild mission from the list.", async fun
     if (ctx.args.length < 1) return await ctx.message.reply(format.usage(ctx, [quest.name, ctx.action], [`mission-id`]));
     const idx = parseInt(ctx.args[0]);
     if (questHandler.removeMission(ctx.guild, idx - 1)) {
+        questHandler.triggerRepost(ctx);
         return await ctx.message.reply(`Removed mission <${idx}> from the list.`);
     }
     return await ctx.message.reply(`Failed to remove mission <${idx}>.`);
@@ -105,6 +106,7 @@ quest.on("edit", "Edit the remaining time of an existing mission.", async functi
     if (!(value > 0 && value < 999)) return await ctx.message.reply(`Invalid time value ${value}.`);
     mission.end = moment().add(value, 'minutes');
     questHandler.setMission(ctx.guild, idx - 1, mission);
+    questHandler.triggerRepost(ctx);
     return await ctx.message.reply(`Successfully updated mission <${idx}>.`)
 });
 
