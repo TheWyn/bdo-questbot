@@ -1,5 +1,5 @@
 module.exports = {
-    serverNames: ["Olvia", "Valencia", "Balenos", "Arsha", "Mediah", "Calpheon", "Velia", "Serendia", "Kamasylvia", "Season"],
+    serverNames: ["Olvia", "Valencia", "Balenos", "Arsha", "Mediah", "Calpheon", "Velia", "Serendia", "Grana", "Season"],
     missions: [
         ["Defeat Mediah Abandoned Iron Mine Barbarian x600", 150],
         ["Defeat Crescent Shrine Argos Saunil x1026", 120],
